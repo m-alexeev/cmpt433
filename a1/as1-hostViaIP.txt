@@ -1,0 +1,95 @@
+[bouncyknight@MacPro a1]$ ifconfig
+ens33: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+        inet 192.168.133.128  netmask 255.255.255.0  broadcast 192.168.133.255
+        inet6 fe80::a83a:d392:9739:ee09  prefixlen 64  scopeid 0x20<link>
+        ether 00:0c:29:75:ba:be  txqueuelen 1000  (Ethernet)
+        RX packets 34444  bytes 51777987 (49.3 MiB)
+        RX errors 0  dropped 0  overruns 0  frame 0
+        TX packets 17471  bytes 1063141 (1.0 MiB)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+
+ens35u1: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+        inet 192.168.7.1  netmask 255.255.255.252  broadcast 192.168.7.3
+        inet6 fe80::1f32:f178:769d:fd22  prefixlen 64  scopeid 0x20<link>
+        ether e4:15:f6:fa:41:5b  txqueuelen 1000  (Ethernet)
+        RX packets 49  bytes 7058 (6.8 KiB)
+        RX errors 0  dropped 0  overruns 0  frame 0
+        TX packets 44  bytes 8382 (8.1 KiB)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+
+ens35u1i2: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+        inet 192.168.6.1  netmask 255.255.255.252  broadcast 192.168.6.3
+        inet6 fe80::2347:9c63:e957:4d35  prefixlen 64  scopeid 0x20<link>
+        ether e4:15:f6:fa:41:5e  txqueuelen 1000  (Ethernet)
+        RX packets 50  bytes 7560 (7.3 KiB)
+        RX errors 0  dropped 0  overruns 0  frame 0
+        TX packets 39  bytes 5956 (5.8 KiB)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+
+lo: flags=73<UP,LOOPBACK,RUNNING>  mtu 65536
+        inet 127.0.0.1  netmask 255.0.0.0
+        inet6 ::1  prefixlen 128  scopeid 0x10<host>
+        loop  txqueuelen 1000  (Local Loopback)
+        RX packets 14  bytes 1810 (1.7 KiB)
+        RX errors 0  dropped 0  overruns 0  frame 0
+        TX packets 14  bytes 1810 (1.7 KiB)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+
+[bouncyknight@MacPro a1]$ ping 192.168.7.2
+PING 192.168.7.2 (192.168.7.2) 56(84) bytes of data.
+64 bytes from 192.168.7.2: icmp_seq=1 ttl=64 time=2.31 ms
+64 bytes from 192.168.7.2: icmp_seq=2 ttl=64 time=2.59 ms
+64 bytes from 192.168.7.2: icmp_seq=3 ttl=64 time=1.76 ms
+64 bytes from 192.168.7.2: icmp_seq=4 ttl=64 time=1.61 ms
+64 bytes from 192.168.7.2: icmp_seq=5 ttl=64 time=2.61 ms
+^C
+--- 192.168.7.2 ping statistics ---
+5 packets transmitted, 5 received, 0% packet loss, time 4008ms
+rtt min/avg/max/mdev = 1.606/2.177/2.614/0.419 ms
+[bouncyknight@MacPro a1]$ ssh debian@192.168.7.2
+debian@192.168.7.2's password: 
+Permission denied, please try again.
+debian@192.168.7.2's password: 
+Linux beaglebone 4.9.78-ti-r94 #1 SMP PREEMPT Fri Jan 26 21:26:24 UTC 2018 armv7l
+
+The programs included with the Debian GNU/Linux system are free software;
+the exact distribution terms for each program are described in the
+individual files in /usr/share/doc/*/copyright.
+
+Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent
+permitted by applicable law.
+Last login: Sat Jan 16 22:26:00 2021
+debian@beaglebone:~$ ls /proc
+1     1073  12    16    2438  31  69  96         device-tree  key-users    pagetypeinfo   thread-self
+10    1097  1257  17    2442  32  7   apm        diskstats    kmsg         partitions     timer_list
+100   11    1275  171   2453  33  70  asound     driver       kpagecgroup  sched_debug    timer_stats
+1004  1100  1277  18    2459  34  73  buddyinfo  execdomains  kpagecount   schedstat      tty
+1005  1134  1292  19    2460  35  74  bus        fb           kpageflags   scsi           uptime
+101   1136  13    2     2471  36  75  cgroups    filesystems  loadavg      self           version
+102   1141  1312  20    25    37  8   cmdline    fs           locks        slabinfo       vmallocinfo
+1036  1145  1330  21    26    38  89  config.gz  interrupts   meminfo      softirqs       vmstat
+1041  1154  1331  22    27    4   9   consoles   iomem        misc         stat           zoneinfo
+1053  1162  1332  23    28    5   90  cpu        ioports      modules      swaps
+106   1165  14    24    29    6   91  cpuinfo    irq          mounts       sys
+1063  1166  1438  2410  3     67  93  crypto     kallsyms     mtd          sysrq-trigger
+107   1184  1439  2437  30    68  95  devices    keys         net          sysvipc
+debian@beaglebone:~$ cd /proc/
+debian@beaglebone:/proc$ cat version
+Linux version 4.9.78-ti-r94 (root@b2-am57xx-beagle-x15-2gb) (gcc version 6.3.0 20170516 (Debian 6.3.0-18) ) #1 SMP PREEMPT Fri Jan 26 21:26:24 UTC 2018
+debian@beaglebone:/proc$ cat uptime
+398.59 314.07
+debian@beaglebone:/proc$ cat cpuinfo
+processor       : 0
+model name      : ARMv7 Processor rev 2 (v7l)
+BogoMIPS        : 995.32
+Features        : half thumb fastmult vfp edsp thumbee neon vfpv3 tls vfpd32 
+CPU implementer : 0x41
+CPU architecture: 7
+CPU variant     : 0x3
+CPU part        : 0xc08
+CPU revision    : 2
+
+Hardware        : Generic AM33XX (Flattened Device Tree)
+Revision        : 0000
+Serial          : 0000000000000000
+

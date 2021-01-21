@@ -1,0 +1,48 @@
+ifconfig
+eth0: flags=-28669<UP,BROADCAST,MULTICAST,DYNAMIC>  mtu 1500
+        ether e4:15:f6:fa:41:5a  txqueuelen 1000  (Ethernet)
+        RX packets 0  bytes 0 (0.0 B)
+        RX errors 0  dropped 0  overruns 0  frame 0
+        TX packets 0  bytes 0 (0.0 B)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+        device interrupt 182  
+
+lo: flags=73<UP,LOOPBACK,RUNNING>  mtu 65536
+        inet 127.0.0.1  netmask 255.0.0.0
+        inet6 ::1  prefixlen 128  scopeid 0x10<host>
+        loop  txqueuelen 1  (Local Loopback)
+        RX packets 960  bytes 66560 (65.0 KiB)
+        RX errors 0  dropped 0  overruns 0  frame 0
+        TX packets 960  bytes 66560 (65.0 KiB)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+
+usb0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+        inet 192.168.7.2  netmask 255.255.255.252  broadcast 192.168.7.3
+        inet6 fe80::e615:f6ff:fefa:415c  prefixlen 64  scopeid 0x20<link>
+        ether e4:15:f6:fa:41:5c  txqueuelen 1000  (Ethernet)
+        RX packets 30  bytes 4306 (4.2 KiB)
+        RX errors 0  dropped 0  overruns 0  frame 0
+        TX packets 34  bytes 7402 (7.2 KiB)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+
+usb1: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+        inet 192.168.6.2  netmask 255.255.255.252  broadcast 192.168.6.3
+        inet6 fe80::e615:f6ff:fefa:415f  prefixlen 64  scopeid 0x20<link>
+        ether e4:15:f6:fa:41:5f  txqueuelen 1000  (Ethernet)
+        RX packets 30  bytes 4306 (4.2 KiB)
+        RX errors 0  dropped 0  overruns 0  frame 0
+        TX packets 39  bytes 6842 (6.6 KiB)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+
+debian@beaglebone:~$ ping 192.168.7.1
+PING 192.168.7.1 (192.168.7.1) 56(84) bytes of data.
+64 bytes from 192.168.7.1: icmp_seq=1 ttl=64 time=2.57 ms
+64 bytes from 192.168.7.1: icmp_seq=2 ttl=64 time=2.12 ms
+64 bytes from 192.168.7.1: icmp_seq=3 ttl=64 time=2.34 ms
+64 bytes from 192.168.7.1: icmp_seq=4 ttl=64 time=0.977 ms
+64 bytes from 192.168.7.1: icmp_seq=5 ttl=64 time=1.44 ms
+^C
+--- 192.168.7.1 ping statistics ---
+5 packets transmitted, 5 received, 0% packet loss, time 4006ms
+rtt min/avg/max/mdev = 0.977/1.892/2.575/0.593 ms
+debian@beaglebone:~$ 
