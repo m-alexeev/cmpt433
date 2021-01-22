@@ -7,5 +7,5 @@ void setTrigger(int LED, char * state);
 // Turn LED ON / OFF , possible states : "0"/"1"
 void setLED(int LED, char* state); 
 
-// Turn LED Delay on
-void setLEDDelay(int LED, char* delay, int state);
+// Blink ALL LEDs for duration seconds , rounds number of times
+void setLEDBlink(long duration, int rounds);

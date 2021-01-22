@@ -5,6 +5,7 @@
 
 #include "headers/leds.h"
 #include "headers/gpio.h"
+#include "headers/utils.h"
 //Generate random number between 0 and 1
 int targetPicker(){
 	srand(time(0));
@@ -19,6 +20,7 @@ void resetLEDS()
 		setLED(i, "0");
 	}
 }
+#include <dirent.h> 
 
 int main()
 {
@@ -63,22 +65,17 @@ int main()
 			}
 
 		}
+
+		//Joystick stuff
 		if (dir == rand){
-			// for (int i = 0; i < 4; i++){
-			// 	setLED(i,"1");
-			// }
-			for (int i = 0 ; i < 4; i++){
-				setLEDDelay(i,"100",1);
-				setLEDDelay(i,"900",0);
-			}
-			// for (int i = 0; i < 4; i++){
-			// 	setLED(i,"0");
-			// }
+			setLEDBlink(0.1, 1);
 			cur_score++;
 			printf("Correct!\n");
 		}
+
 		else if (dir < 2){
 			printf("Incorrect\n");
+			setLEDBlink(0.1, 5);
 		}
 		
 		else{

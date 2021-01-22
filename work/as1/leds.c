@@ -1,4 +1,5 @@
 #include "headers/leds.h"
+#include "headers/utils.h"
 
 const char TRIGGERS[4][50] = {
     "/sys/class/leds/beaglebone:green:usr0/trigger",
@@ -48,22 +49,25 @@ void setTrigger(int LED, char* state){
 }
 
 
-void setLEDDelay(int LED, char* delay, int state){
-
-    FILE *pDelay;
-
-    pDelay = state == 0 ? fopen(DELAY_OFF[LED],"w") : fopen(DELAY_ON[LED], "w");
-
-    if (pDelay == NULL){
-        state == 0 ? printf("ERROR OPENING %s", DELAY_OFF[LED]) : printf("ERROR OPENING %s", DELAY_ON[LED]);
+void setLEDBlink(long duration, int rounds){    
+    //Turn all LEDS OFF
+    for (int i = 0; i < 4; i ++){
+        setLED(i,"0");
     }
-    int charWritten = fprintf(pDelay, delay);
-	if (charWritten <= 0){
-		printf("ERROR WRITING DATA.\n"); 
-		exit(1); 
-	}
-    fclose(pDelay);
+    // Blink round number of times 
+    for (int round = 0; round < rounds; round ++){
 
+        //Turn ALL leds ON 
+        for (int i = 0; i < 4; i ++){
+            setLED(i, "1");
+        }
+        wait(duration); 
+        //Turn ALL LEDS OFF After duration ms 
+        for (int i = 0; i < 4; i ++){
+            setLED(i, "0");
+        }
+        wait(duration);
+    } 
 }
 
 
