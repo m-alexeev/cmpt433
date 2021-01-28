@@ -10,4 +10,7 @@ void setLED(int LED, char* state);
 // Blink ALL LEDs for duration seconds , rounds number of times
 void setLEDBlink(long duration, int rounds);
 
+//turns off all LEDS and sets trigger to NONE
+void resetLEDS(); 
+
 #endif

@@ -40,22 +40,21 @@ void setTrigger(int LED, char* state){
 
 void setLEDBlink(long duration, int rounds){    
     //Turn all LEDS OFF
-    for (int i = 0; i < 4; i ++){
-        setLED(i,"0");
-    }
+    resetLEDS();
+    wait(0, 2 * duration);
+
     // Blink round number of times 
     for (int round = 0; round < rounds; round ++){
-
         //Turn ALL leds ON 
         for (int i = 0; i < 4; i ++){
             setLED(i, "1");
         }
-        wait(duration); 
+        wait(0, duration); 
         //Turn ALL LEDS OFF After duration ms 
         for (int i = 0; i < 4; i ++){
             setLED(i, "0");
         }
-        wait(duration);
+        wait(0, duration);
     } 
 }
 
@@ -76,4 +75,12 @@ void setLED(int LED, char* state){
 	}
 
 	fclose(pBrightness);
+}
+
+
+void resetLEDS(){
+    for (int i = 0; i < 4; i++){
+		setTrigger(i, "none");
+		setLED(i, "0");
+	}
 }

@@ -6,21 +6,24 @@
 #include "headers/leds.h"
 #include "headers/gpio.h"
 #include "headers/utils.h"
+
+
+static char file[4][50] = {
+		"/sys/class/gpio/gpio26/value",
+		"/sys/class/gpio/gpio46/value",
+		"/sys/class/gpio/gpio47/value",
+		"/sys/class/gpio/gpio65/value",
+};
+
+
 //Generate random number between 0 and 1
-int targetPicker(){
+static int targetPicker(){
 	srand(time(0));
 	int random = rand() % 2;
 	return random;
 }
 
-void resetLEDS()
-{
-	for (int i = 0; i < 4; i++){
-		setTrigger(i, "none");
-		setLED(i, "0");
-	}
-}
-#include <dirent.h> 
+
 
 int main()
 {
@@ -29,12 +32,7 @@ int main()
 
 	printf("Press the Zen cape's Joystick in the direction of the LED.\nUP for LED 0 (top)\nDOWN for LED 3 (bottom)\nLEFT/RIGHT for exit app.\n");
 
-	char file[4][50] = {
-		"/sys/class/gpio/gpio26/value",
-		"/sys/class/gpio/gpio46/value",
-		"/sys/class/gpio/gpio47/value",
-		"/sys/class/gpio/gpio65/value",
-	};
+
 
 	resetLEDS();
 	int cur_score = 0;
@@ -65,17 +63,19 @@ int main()
 			}
 
 		}
-
+		//1E8 nanoseconds == 0.1 seconds 
+		
+		long blinkDuration = 1E8;
 		//Joystick stuff
 		if (dir == rand){
-			setLEDBlink(0.1, 1);
+			setLEDBlink(blinkDuration, 1);
 			cur_score++;
 			printf("Correct!\n");
 		}
 
 		else if (dir < 2){
 			printf("Incorrect\n");
-			setLEDBlink(0.1, 5);
+			setLEDBlink(blinkDuration, 5);
 		}
 		
 		else{
