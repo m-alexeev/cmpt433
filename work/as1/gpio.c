@@ -1,3 +1,7 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
 #include "headers/gpio.h"
 
 #define EXPORT "/sys/class/gpio/export"

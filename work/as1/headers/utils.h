@@ -1,8 +1,8 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
-
+#ifndef UTILS_H_
+#define UTILS_H_ 
 
 //Sleep for n seconds (can also do fractions of a second)
 void wait(long seconds);
 
+
+#endif 

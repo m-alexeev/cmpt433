@@ -1,32 +1,21 @@
+#include <stdio.h>
+#include <stdlib.h>
+
 #include "headers/leds.h"
 #include "headers/utils.h"
 
-const char TRIGGERS[4][50] = {
+static const char TRIGGERS[4][50] = {
     "/sys/class/leds/beaglebone:green:usr0/trigger",
     "/sys/class/leds/beaglebone:green:usr1/trigger",
     "/sys/class/leds/beaglebone:green:usr2/trigger",
     "/sys/class/leds/beaglebone:green:usr3/trigger",
 };
 
-const char BRIGHTNESS[4][50] = {
+static const char BRIGHTNESS[4][50] = {
     "/sys/class/leds/beaglebone:green:usr0/brightness",
     "/sys/class/leds/beaglebone:green:usr1/brightness",
     "/sys/class/leds/beaglebone:green:usr2/brightness",
     "/sys/class/leds/beaglebone:green:usr3/brightness"
-};
-
-const char DELAY_ON[4][50] = {
-    "/sys/class/leds/beaglebone:green:usr0/delay_on",
-    "/sys/class/leds/beaglebone:green:usr1/delay_on",
-    "/sys/class/leds/beaglebone:green:usr2/delay_on",
-    "/sys/class/leds/beaglebone:green:usr3/delay_on"
-};
-
-const char DELAY_OFF[4][50] = {
-    "/sys/class/leds/beaglebone:green:usr0/delay_off",
-    "/sys/class/leds/beaglebone:green:usr1/delay_off",
-    "/sys/class/leds/beaglebone:green:usr2/delay_off",
-    "/sys/class/leds/beaglebone:green:usr3/delay_off"
 };
 
 void setTrigger(int LED, char* state){
