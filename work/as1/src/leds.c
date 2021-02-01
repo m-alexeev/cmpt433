@@ -28,7 +28,7 @@ void setTrigger(int LED, char* state){
 		exit(1);
 	}
 
-	int charWritten = fprintf(pLedTriggerFile, state);
+	int charWritten = fprintf(pLedTriggerFile, "%s", state);
 	if (charWritten <= 0){
 		printf("ERROR WRITING DATA.\n"); 
 		exit(1); 
@@ -68,7 +68,7 @@ void setLED(int LED, char* state){
 		exit(1);
 	}
 
-	int intWritten = fprintf(pBrightness, state);
+	int intWritten = fprintf(pBrightness, "%s",  state);
 	if (intWritten <= 0){
 		printf("ERROR WRITING DATA.\n"); 
 		exit(1); 
