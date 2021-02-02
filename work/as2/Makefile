@@ -2,7 +2,7 @@
 # by Brian Fraser
 
 # Edit this file to compile extra C files into their own programs.
-TARGETS= potDriver
+TARGETS= potDriver i2cDriver
 
 
 PUBDIR = $(HOME)/cmpt433/public/myApps
