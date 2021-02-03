@@ -12,7 +12,7 @@ int getArraySize(void);
 int* initializeArray(int size); 
 
 // Sorts array using bubble sort 
-void sortArray(); 
+int* sortArray(); 
 
 //Frees the space used by the array after it is done being used
 void freeArray(int* arr); 

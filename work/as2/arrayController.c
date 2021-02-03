@@ -22,6 +22,14 @@ static int*  createArray(int size){
     return arr; 
 }
 
+
+static void swapElements(int* a, int* b){
+    int temp = *a; 
+    *a = *b; 
+    *b = temp; 
+}
+
+
 static int* permutateArray(int *arr, int size){
     //Using a modern version of the Fisher-Yates shuffle
    
@@ -29,10 +37,8 @@ static int* permutateArray(int *arr, int size){
     srand(time(NULL));
     //Swap around the elements in the arrays
     for (int i = size - 1; i > 0 ; i --){
-        int j = (rand() % i ); 
-        int temp = arr[i]; 
-        arr[i] = arr[j];
-        arr[j] = temp;
+        int j = (rand() % i );
+        swapElements(&arr[i], &arr[j]);
     }
     return arr;
 }
@@ -50,24 +56,23 @@ static int* permutateArray(int *arr, int size){
 int* initializeArray(int size){
     assert(size > 0 && size <= 2100);
     int* arr = createArray(size);
-    for (int i = 0; i< size; i ++){
-        printf("%d ", arr[i]);
-    }
-    printf("\n");
     arr = permutateArray(arr, size);
-    for (int i = 0; i< size; i ++){
-        printf("%d ", arr[i]);
-    }
-    printf("\n");
-
     return arr; 
 }
 
 
 
 
-void sortArray(){
-    return;
+int* sortArray(int* arr, int size){
+
+    for (int i = 0; i < size - 1 ; i ++){
+        for (int j = 0; j < size - i - 1 ; j ++ ){
+            if (arr[j] > arr[j+1]){
+                swapElements(&arr[j], &arr[j+1]);
+            }
+        }
+    }
+    return arr; 
 }
 
 
