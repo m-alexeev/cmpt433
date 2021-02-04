@@ -2,13 +2,13 @@
 #include <stdlib.h>
 #include <stdbool.h> 
 
-#include "./headers/arrayController.h"
+#include "./headers/sorter.h"
 
 int main(int argc, char* argv[]){
     
     int size = 10; 
-    
-    int* arr = initializeArray(size);
+    Sorter_setArraySize(size);
+    int* arr = Sorter_initializeArray(size);
     
     for (int i = 0; i < size; i ++){
         printf("%d ", arr[i]);
@@ -16,13 +16,14 @@ int main(int argc, char* argv[]){
     printf("\n");
         
 
-    arr = sortArray(arr, size); 
+    Sorter_sortArray();
+
     for (int i = 0; i < size; i ++){
         printf("%d ", arr[i]);
     }
     printf("\n");
 
 
-    freeArray(arr);
+    Sorter_freeArray();
 
 }

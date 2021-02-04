@@ -1,6 +1,6 @@
 OUTFILE = sorter
 OUTDIR = $(HOME)/cmpt433/public/myApps
-TARGETS = main.c arrayController.c
+TARGETS = main.c sorter.c
 
 
 CROSS_COMPILE = arm-linux-gnueabihf-
