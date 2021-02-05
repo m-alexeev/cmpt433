@@ -1,33 +1,27 @@
-#ifndef SORTER_H_
-#define SORTER_H_
-
+// sorter.h
+// Module to spawn a separate thread to sort random arrays
+// (permutations) on a background thread. It provides access to the
+// contents of the current (potentially partially sorted) array,
+// and to the count of the total number of arrays sorted.
+#ifndef _SORTER_H_
+#define _SORTER_H_
 
 // Begin/end the background thread which sorts random permutations.
-void Sorter_startSorting(void); 
-void Sorter_stopSorting(void);
+void Sorter_start(void);
+void Sorter_stop(void);
 
+// Get the size of the array currently being sorted.
+// Set the size the next array to sort (don’t change current array)
+void Sorter_setArrayLength(int newLength);
+int Sorter_getArrayLength(void);
 
-// Set size of the array 
-void Sorter_setArraySize(int size);
+// Get a copy of the current (potentially partially sorted) array.
+// Returns a newly allocated array and sets 'length' to be the
+// number of elements in the returned array (output-only parameter).
+// The calling code must call free() on the returned pointer.
+int* Sorter_getArrayData(int *length);
 
-// Returns size of array
-int Sorter_getArraySize(void);
+// Get the number of arrays which have finished being sorted.
+long long Sorter_getNumArraysSorted(void);
 
-// Create the array
-int* Sorter_initializeArray(int size); 
-
-// Sorts array using bubble sort 
-void Sorter_sortArray(void); 
-
-//Frees the space used by the array after it is done being used
-void Sorter_freeArray(void); 
-
-//Get a copy of the array and return a copy of the current potentially sorted array
-int* Sorter_getArrayData(int *length); 
-
-
-// Get number of arrays that have been sorted
-long long Sorter_getNumberArraysSorted(void); 
-
-
-#endif // !ARRAYCONTROLLER_H_
+#endif
