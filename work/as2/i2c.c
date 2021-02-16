@@ -40,7 +40,7 @@ int initI2cBus(char* bus, int address)
 }
 
 
-static void writeI2cReg(int i2cFileDesc, unsigned char regAddr, unsigned char value)
+void writeI2cReg(int i2cFileDesc, unsigned char regAddr, unsigned char value)
 {
 	unsigned char buff[2];
 	buff[0] = regAddr;
