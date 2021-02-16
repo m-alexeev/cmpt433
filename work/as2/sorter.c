@@ -106,7 +106,7 @@ int Sorter_getArrayLength(void){
 }
 
 //Return number of arrays that have completed sorting 
-long long Sorter_getNumArrays_Sorted(void){
+long long Sorter_getNumArraysSorted(void){
     return NUM_ARRAYS_SORTED; 
 }
 
