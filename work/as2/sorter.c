@@ -133,9 +133,9 @@ void Sorter_start(void){
     int error = pthread_create(&tid, &attr, Sorter_initAndSort, NULL); 
 
     if (error != 0){
-        printf("Thread failed creation: %s\n", strerror(error));
+        printf("Sorter thread failed creation: %s\n", strerror(error));
     }else{
-        printf("Thread created successfully\n");
+        printf("Sorter thread created successfully\n");
     }
 }
 

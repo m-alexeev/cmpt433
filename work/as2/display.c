@@ -12,8 +12,8 @@
 #define PORT 12345
 #define MAX_LEN 1500
 
-// static pthread_t  tid; 
-
+static pthread_t  tid; 
+static int socketDescriptor;
 
 // 1. Create Single threaded nework prog
 // 2. Add Threading 
@@ -47,28 +47,40 @@ static void parseCommand(char* message){
     }else if (strcmp(commands[2].cmp, message) == 0){
         printf("%d\n",Sorter_getArrayLength()); 
     }else if (strcmp(commands[3].cmp, message) == 0){
-        printf("ARRAY\n");
+        int len; 
+        int * temparr = Sorter_getArrayData(&len);
+        for (int i = 0; i < len; i ++){
+            //1. Send back the data to the requeting entity 
+            printf("%d ", temparr[i]);
+        }
+        printf("\n");
+        free(temparr);
     }else if (strcmp(commands[4].cmp, message) == 0){
-        printf("10\n");
+        int len; 
+        int* temparr = Sorter_getArrayData(&len);
+        printf("%d is the 10th element\n", temparr[9]);
+        free(temparr);
     }else if (strcmp(commands[5].cmp, message) == 0){
         printf("Stop\n"); 
+        //Stop the program and all the Threads
     }
     
 
 }
 
 
-static void Display_listen(void){
+static void*  Display_listen(void* args){
     struct sockaddr_in sin;
     memset(&sin, 0 , sizeof(sin));
     sin.sin_family = AF_INET;
     sin.sin_addr.s_addr = htonl(INADDR_ANY);
     sin.sin_port = htons(PORT);
 
-    int socketDescriptor =  socket(PF_INET, SOCK_DGRAM, 0);
+    socketDescriptor =  socket(PF_INET, SOCK_DGRAM, 0);
     bind(socketDescriptor, (struct sockaddr*) &sin, sizeof(sin));
-
-    while (1)
+    bool notDone = true; 
+    
+    while (notDone)
     {
         struct sockaddr_in sinRemote; 
         unsigned int sin_len = sizeof(sinRemote);
@@ -95,18 +107,28 @@ static void Display_listen(void){
 			0,
 			(struct sockaddr *) &sinRemote, sin_len);
     }
-    
+    pthread_exit(0);
 
 }
 
 
 void Display_start(void){
-    Display_listen();
+    pthread_attr_t attr; 
+    pthread_attr_init(&attr);
+    
+    int error = pthread_create(&tid, &attr, Display_listen, NULL); 
+    if (error != 0){
+        printf("Network thread failed creation %s\n", strerror(error));
+    }else{
+        printf("Network thread created successfully\n");
+    }
+
 }
 
 
 void Display_stop(void){
-
+    close(socketDescriptor);
+    pthread_join(tid, NULL);
 }
 
 
