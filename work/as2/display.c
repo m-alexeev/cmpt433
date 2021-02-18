@@ -74,17 +74,18 @@ static void parseCommand(char* message, int len){
                 if (MAX_LEN - messageLen < 7){
                     sendReply(messageTx);
                     memset(messageTx, 0, MAX_LEN);
-                    messageLen = sprintf(messageTx, "%d, ", temparr[i]);
-                }else{
-                    if (i < len - 1 && i > 0 && i % 10 == 0){
-                        messageLen += sprintf(messageTx + messageLen, "%d,\n",temparr[i]);
-                    }else if (i == len - 1){
-                        messageLen += sprintf(messageTx + messageLen, "%d\n",temparr[i]);
-                    } 
-                    else{
-                        messageLen += sprintf(messageTx + messageLen, "%d, ",temparr[i]);
-                    }
+                    messageLen = 0;
                 }
+                if (i == len - 1){
+                    messageLen += sprintf(messageTx + messageLen, "%d\n",temparr[i]);
+                } 
+                else if (i > 0 && i % 10 == 0){
+                    messageLen += sprintf(messageTx + messageLen, "%d,\n",temparr[i]);
+                } 
+                else{
+                    messageLen += sprintf(messageTx + messageLen, "%d, ",temparr[i]);
+                }
+                
             }
             sendReply(messageTx);
             free(temparr);
