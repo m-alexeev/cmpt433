@@ -15,7 +15,8 @@
 
 static pthread_t  tid; 
 static int socketDescriptor;
-
+static struct sockaddr_in sinRemote; 
+static unsigned int sin_len;
 
 typedef struct Args{
     char name[15]; 
@@ -31,12 +32,11 @@ static args commands[5] = {{"count",  "-- display number arrays sorted.\n"},
 
 
 
-
-static void printHelp(void){
-    printf("Accepted command examples:\n");
-    for (int i =0 ; i < 5; i ++ ){
-        printf("%-10s %-30s", commands[i].name, commands[i].description);    
-    }
+static void sendReply(char* message){
+    sin_len = sizeof(sinRemote);
+    sendto( socketDescriptor,
+        message, MAX_LEN, 0,
+        (struct sockaddr *) &sinRemote, sin_len);
 }
 
 
@@ -44,46 +44,52 @@ static void parseCommand(char* message, int len){
 
     const char delim[2] = " "; 
     char * token; 
-
     bool get = false; 
+    
+    char messageTx[MAX_LEN];
+    memset(messageTx,0,MAX_LEN);
+
     token = strtok(message, delim);
     while (token != NULL){
         if (strcmp(token, "help\n") == 0){
-            printHelp();
+            int len = 0;
+            len += sprintf(messageTx, "Accepted command examples:\n");
+            for (int i = 0; i < 5; i ++){
+                len += sprintf(messageTx + len, "%-10s %-30s", commands[i].name, commands[i].description);
+            }
+            sendReply(messageTx);
         }
         if (strcmp(token, "count\n") == 0){
-            printf("Number of arrays sorted = %llu\n",Sorter_getNumArraysSorted());        
+            sprintf(messageTx, "Number of arrays sorted %llu\n", Sorter_getNumArraysSorted());
+            sendReply(messageTx);
         }
         if (strcmp(token, "stop\n") == 0){
-            printf("STOP!\n");
+            sprintf(messageTx, "Program Terminating\n");
+            sendReply(messageTx);
         }
         if (get && (strcmp(token, "array\n") == 0)){
             int * temparr = Sorter_getArrayData(&len);
             for (int i = 0; i < len; i ++){
-                //1. Send back the data to the requeting entity 
-                    
                 printf("%d ", temparr[i]);
             }
             printf("\n");
             free(temparr);
         }
         if (get && (strcmp(token, "length\n") == 0)){
-            printf("Current array length = %d\n",Sorter_getArrayLength()); 
+            sprintf(messageTx, "Current array length = %d\n", Sorter_getArrayLength());
+            sendReply(messageTx);
         }
         
-        if (get && atoi(token) != 0){
+        if (get){
             int index = atoi(token);
-
             int len; 
             int * temp = Sorter_getArrayData(&len);
-            printf("%d\n", len);
             if (index < 1 || index > len){
-                printf("get index is out of bounds\n");
-
+                sprintf(messageTx,"Invalid argument. Must be between 1 and %d (array length)\n", len);
             }else{
-                printf("%d\n", temp[index - 1]);
+                sprintf(messageTx,"%d\n", temp[index - 1]);
             }
-
+            sendReply(messageTx);
         }
         if (strcmp(token, "get") == 0){
             get = true;
@@ -91,34 +97,7 @@ static void parseCommand(char* message, int len){
 
         token = strtok(NULL, delim);
     }
-
-    // if (strcmp(commands[0].cmp, message) == 0){
-    //     printf("Accepted command examples:\n");
-    //     for (int i = 1; i < 6; i ++){
-    //         printf("%-10s %-30s", commands[i].name, commands[i].description);
-    //     }    
-    // }else if (strcmp(commands[1].cmp, message) == 0){
-    // }else if (strcmp(commands[2].cmp, message) == 0){
-    //     printf("%d\n",Sorter_getArrayLength()); 
-    // }else if (strcmp(commands[3].cmp, message) == 0){
-    //     int len; 
-    //     int * temparr = Sorter_getArrayData(&len);
-    //     for (int i = 0; i < len; i ++){
-    //         //1. Send back the data to the requeting entity 
-    //         printf("%d ", temparr[i]);
-    //     }
-    //     printf("\n");
-    //     free(temparr);
-    // }else if (strcmp(commands[4].cmp, message) == 0){
-    //     int len; 
-    //     int* temparr = Sorter_getArrayData(&len);
-    //     printf("%d is the 10th element\n", temparr[9]);
-    //     free(temparr);
-    // }else if (strcmp(commands[5].cmp, message) == 0){
-    //     printf("Stop\n"); 
-    //     //Stop the program and all the Threads
-    // }
-    
+   
 
 }
 
@@ -136,8 +115,7 @@ static void*  Display_listen(void* args){
     
     while (notDone)
     {
-        struct sockaddr_in sinRemote; 
-        unsigned int sin_len = sizeof(sinRemote);
+        sin_len = sizeof(sinRemote);
         char messageRx[MAX_LEN];
         int bytesRx= recvfrom(socketDescriptor, 
                 messageRx, MAX_LEN,0, 
@@ -146,20 +124,9 @@ static void*  Display_listen(void* args){
         int termIdx = (bytesRx < MAX_LEN) ? bytesRx : MAX_LEN - 1;
         messageRx[termIdx] = 0;
 
-        //Parse the incoming command 
+        //Parse the incoming command and send response message
         parseCommand(messageRx, termIdx); 
-      
-        
-        // Compose the reply message:
-		// (NOTE: watch for buffer overflows!).
-		char messageTx[MAX_LEN];
 
-		// Transmit a reply:
-		sin_len = sizeof(sinRemote);
-		sendto( socketDescriptor,
-			messageTx, strlen(messageTx),
-			0,
-			(struct sockaddr *) &sinRemote, sin_len);
     }
     pthread_exit(0);
 

@@ -16,22 +16,11 @@ int main(int argc, char* argv[]){
     Sorter_start(); 
     Display_start();
 
-    sleepSecs(1);
 
-    int length = 0;
-    int* array = Sorter_getArrayData(&length);
-    for (int i = 0; i < length; i ++){
-        printf("%d ",array[i]);
-    }
-    printf("\n");
-    
-    free(array);
-    
-
+    //Call stop inside network module
     Sorter_stop();
     Display_stop(); 
+
     printf("Done!\n");
 
-
-    //Start Nework Thread and listen to input 
 }
