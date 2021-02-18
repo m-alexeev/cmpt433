@@ -12,8 +12,8 @@
 
 //Defining module variables 
 
-static int NEXT_ARRAY_SIZE = 20;
-static int CUR_ARRAY_SIZE = 20;
+static int NEXT_ARRAY_SIZE = 100;
+static int CUR_ARRAY_SIZE = 100;
 static long long NUM_ARRAYS_SORTED = 0; 
 static int* ARRAY; 
 
@@ -36,8 +36,7 @@ static void swapElements(int* a, int* b){
 
 
 //Initializes array, fills up the indexes 
-static void Sorter_createArray(void){
-    
+static void Sorter_createArray(void){   
     pthread_mutex_lock(&array_mutex);{
         ARRAY = (int*) malloc(CUR_ARRAY_SIZE * sizeof(int));
         memset(ARRAY, 0, CUR_ARRAY_SIZE * sizeof(int));
@@ -96,7 +95,7 @@ static void* Sorter_initAndSort(void* arg){
 // Setter for size of array
 void Sorter_setArrayLength(int size){
     assert(size > 0 && size < 2100); 
-    CUR_ARRAY_SIZE = size; 
+    NEXT_ARRAY_SIZE = size;
     return; 
 }
 

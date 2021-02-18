@@ -9,7 +9,7 @@
 
 int main(int argc, char* argv[]){
     
-    int size = 20; 
+    int size = 400; 
     Sorter_setArrayLength(size);
     
     printf("Start\n");

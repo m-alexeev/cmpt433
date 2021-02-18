@@ -11,7 +11,7 @@
 #include "./headers/sorter.h"
 
 #define PORT 12345
-#define MAX_LEN 1500
+#define MAX_LEN 400
 
 static pthread_t  tid; 
 static int socketDescriptor;
@@ -51,7 +51,7 @@ static void parseCommand(char* message, int len){
 
     token = strtok(message, delim);
     while (token != NULL){
-        if (strcmp(token, "help\n") == 0){
+        if (!get && strcmp(token, "help\n") == 0){
             int len = 0;
             len += sprintf(messageTx, "Accepted command examples:\n");
             for (int i = 0; i < 5; i ++){
@@ -59,28 +59,39 @@ static void parseCommand(char* message, int len){
             }
             sendReply(messageTx);
         }
-        if (strcmp(token, "count\n") == 0){
+        if (!get && strcmp(token, "count\n") == 0){
             sprintf(messageTx, "Number of arrays sorted %llu\n", Sorter_getNumArraysSorted());
             sendReply(messageTx);
         }
-        if (strcmp(token, "stop\n") == 0){
+        if (!get && strcmp(token, "stop\n") == 0){
             sprintf(messageTx, "Program Terminating\n");
             sendReply(messageTx);
         }
         if (get && (strcmp(token, "array\n") == 0)){
             int * temparr = Sorter_getArrayData(&len);
+            int messageLen = 0;
             for (int i = 0; i < len; i ++){
-                printf("%d ", temparr[i]);
+                if (MAX_LEN - messageLen < 7){
+                    sendReply(messageTx);
+                    memset(messageTx, 0, MAX_LEN);
+                    messageLen = sprintf(messageTx, "%d, ", temparr[i]);
+                }else{
+                    if (i < len - 1 && i > 0 && i % 10 == 0){
+                        messageLen += sprintf(messageTx + messageLen, "%d,\n",temparr[i]);
+                    }else if (i == len - 1){
+                        messageLen += sprintf(messageTx + messageLen, "%d\n",temparr[i]);
+                    } 
+                    else{
+                        messageLen += sprintf(messageTx + messageLen, "%d, ",temparr[i]);
+                    }
+                }
             }
-            printf("\n");
+            sendReply(messageTx);
             free(temparr);
-        }
-        if (get && (strcmp(token, "length\n") == 0)){
+        }else if (get && (strcmp(token, "length\n") == 0)){
             sprintf(messageTx, "Current array length = %d\n", Sorter_getArrayLength());
             sendReply(messageTx);
-        }
-        
-        if (get){
+        }else if (get){
             int index = atoi(token);
             int len; 
             int * temp = Sorter_getArrayData(&len);
