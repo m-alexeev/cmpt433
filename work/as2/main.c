@@ -5,7 +5,8 @@
 #include "./headers/sorter.h"
 #include "./headers/util.h"
 #include "./headers/i2c.h"
-#include "./headers/display.h"
+#include "./headers/network.h"
+#include "./headers/shutdown.h"
 
 int main(int argc, char* argv[]){
     
@@ -17,9 +18,11 @@ int main(int argc, char* argv[]){
     Display_start();
 
 
-    //Call stop inside network module
-    Sorter_stop();
+    Shutdown_wait();
+
+
     Display_stop(); 
+    Sorter_stop();
 
     printf("Done!\n");
 

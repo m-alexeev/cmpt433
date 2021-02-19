@@ -20,7 +20,7 @@ static int* ARRAY;
 //Threading
 static pthread_t tid;
 pthread_mutex_t array_mutex = PTHREAD_MUTEX_INITIALIZER;  
-
+static bool notDone = true;
 
 
 // ==== LOCAL FUNCTIONS ==== //
@@ -82,7 +82,7 @@ static void Sorter_sortArray(){
 //TODO Change the while(1) loop for an exit cond 
 //Create array, shuffle it and sort 
 static void* Sorter_initAndSort(void* arg){
-    while(1){
+    while(notDone){
         Sorter_createArray();
         Sorter_sortArray();
     }
@@ -136,11 +136,15 @@ void Sorter_start(void){
     }else{
         printf("Sorter thread created successfully\n");
     }
+    
+
 }
 
 
 //Stop Sorter Thread
 void Sorter_stop(void){
+    notDone = false; 
+
     pthread_join(tid, NULL);
     free(ARRAY);
 }
