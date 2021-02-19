@@ -144,7 +144,7 @@ static void parseCommand(char* message){
 
 
 
-static void*  Display_listen(void* args){
+static void*  Network_listen(void* args){
     struct sockaddr_in sin;
     memset(&sin, 0 , sizeof(sin));
     sin.sin_family = AF_INET;
@@ -169,16 +169,15 @@ static void*  Display_listen(void* args){
         parseCommand(messageRx); 
 
     }
-    printf("Exiting network thread\n");
     pthread_exit(0);
 }
 
 
-void Display_start(void){
+void Network_start(void){
     pthread_attr_t attr; 
     pthread_attr_init(&attr);
     
-    int error = pthread_create(&tid, &attr, Display_listen, NULL); 
+    int error = pthread_create(&tid, &attr, Network_listen, NULL); 
     if (error != 0){
         printf("Network thread failed creation %s\n", strerror(error));
     }else{
@@ -187,8 +186,9 @@ void Display_start(void){
 }
 
 
-void Display_stop(void){
+void Network_stop(void){
     notDone = false;
+    printf("Exiting network thread\n");
 
     pthread_join(tid, NULL);
     close(socketDescriptor);

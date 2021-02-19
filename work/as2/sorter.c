@@ -136,7 +136,6 @@ void Sorter_start(void){
     }else{
         printf("Sorter thread created successfully\n");
     }
-    
 
 }
 
@@ -144,6 +143,7 @@ void Sorter_start(void){
 //Stop Sorter Thread
 void Sorter_stop(void){
     notDone = false; 
+    printf("Exiting Sorter thread\n");
 
     pthread_join(tid, NULL);
     free(ARRAY);

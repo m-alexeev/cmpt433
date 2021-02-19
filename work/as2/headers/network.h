@@ -1,7 +1,7 @@
-#ifndef _DISPLAY_H_
-#define _DISPLAY_H_
+#ifndef _NETWORK_H_
+#define _NETWORK_H_
 
-void Display_start(void);
-void Display_stop(void);
+void Network_start(void);
+void Network_stop(void);
 
 #endif
