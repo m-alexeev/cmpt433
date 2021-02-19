@@ -73,6 +73,7 @@ static void Sorter_sortArray(){
             }pthread_mutex_unlock(&array_mutex);
         }
     }
+    free(ARRAY);
     NUM_ARRAYS_SORTED ++;
     //Set next array size to be new size if it changed 
     CUR_ARRAY_SIZE = NEXT_ARRAY_SIZE;

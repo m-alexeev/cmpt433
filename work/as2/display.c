@@ -5,7 +5,9 @@
 
 #include "./headers/display.h"
 
-pthread_mutex_t display_mutex = PTHREAD_MUTEX_INITIALIZER;  
+
+// static pthread_t  tid; 
+// pthread_mutex_t display_mutex = PTHREAD_MUTEX_INITIALIZER;  
 
 
 void Display_start(){

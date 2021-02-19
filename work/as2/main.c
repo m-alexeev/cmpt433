@@ -8,6 +8,7 @@
 #include "./headers/network.h"
 #include "./headers/shutdown.h"
 #include "./headers/display.h"
+#include "./headers/knob.h"
 
 int main(int argc, char* argv[]){
     
@@ -17,11 +18,13 @@ int main(int argc, char* argv[]){
     printf("Start\n");
     Sorter_start(); 
     Display_start();
+    Knob_start();
     Network_start();
 
     Shutdown_wait();
 
     Network_stop();
+    Knob_stop();
     Display_stop(); 
     Sorter_stop();
 

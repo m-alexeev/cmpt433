@@ -9,7 +9,6 @@
 
 void sleepSecs(float seconds)
 {
-
     struct timespec reqDelay = {seconds};
     nanosleep(&reqDelay, (struct timespec *)NULL);
 }
