@@ -19,7 +19,7 @@ static int* ARRAY;
 
 //Threading
 static pthread_t tid;
-pthread_mutex_t array_mutex = PTHREAD_MUTEX_INITIALIZER;  
+static pthread_mutex_t array_mutex = PTHREAD_MUTEX_INITIALIZER;  
 static bool notDone = true;
 
 
@@ -74,6 +74,7 @@ static void Sorter_sortArray(){
         }
     }
     free(ARRAY);
+    ARRAY = NULL;
     NUM_ARRAYS_SORTED ++;
     //Set next array size to be new size if it changed 
     CUR_ARRAY_SIZE = NEXT_ARRAY_SIZE;
@@ -147,5 +148,7 @@ void Sorter_stop(void){
     printf("Exiting Sorter thread\n");
 
     pthread_join(tid, NULL);
-    free(ARRAY);
+    if (ARRAY != NULL){
+        free(ARRAY);
+    }
 }

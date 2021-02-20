@@ -6,6 +6,7 @@
 #include <linux/i2c.h>
 #include <linux/i2c-dev.h>
 
+
 #define I2CDRV_LINUX_BUS0 "/dev/i2c-0"
 #define I2CDRV_LINUX_BUS1 "/dev/i2c-1"
 #define I2CDRV_LINUX_BUS2 "/dev/i2c-2"
@@ -24,6 +25,11 @@
 
 int initI2cBus(char* bus, int address)
 {
+	//Set GPIO pins to I2C
+	system("config-pin P9_17");
+	system("config-pin P9_18");
+
+
 	int i2cFileDesc = open(bus, O_RDWR);
 	if (i2cFileDesc < 0) {
 		printf("I2C DRV: Unable to open bus for read/write (%s)\n", bus);

@@ -60,6 +60,7 @@ static int initI2cBus(char* bus, int address)
 	return i2cFileDesc;
 }
 
+
 static void writeI2cReg(int i2cFileDesc, unsigned char regAddr, unsigned char value)
 {
 	unsigned char buff[2];

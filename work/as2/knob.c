@@ -10,8 +10,8 @@
 #include "./headers/knob.h"
 
 //Threading 
-static pthread_t  tid; 
-static bool notDone = true;
+// static pthread_t  tid; 
+// static bool notDone = true;
 
 //Piecewise consts
 #define PIECEWISE_NUM_POINTS 10
@@ -24,7 +24,7 @@ const float ARRAY_SIZES[]  = {1, 20, 60, 120, 250, 300, 500, 800, 1200,2100};
 #define A2D_MAX_READING 4095
 
 
-static int getVoltage0Reading(){
+int Knob_getVoltage0Reading(){
     // Open file
     FILE *f = fopen(A2D_FILE_VOLTAGE0, "r");
     if (!f) {
@@ -44,7 +44,7 @@ static int getVoltage0Reading(){
     return a2dReading;
 }
 
-static int calculateArraySize(int reading){
+int Knob_calculateArraySize(int reading){
     int index = 0; 
 
     //Account for min and max values 
@@ -69,41 +69,40 @@ static int calculateArraySize(int reading){
     float verticalDist = ARRAY_SIZES[index + 1] - ARRAY_SIZES[index]; 
 
     arraySize = floor(percentH * verticalDist) + ARRAY_SIZES[index];
-    printf("%d, %f, %f, %f, %f, %d\n",reading, A2D_READINGS[index], A2D_READINGS[index+1], ARRAY_SIZES[index], ARRAY_SIZES[index+1], arraySize);
 
     // printf("%d\n", arraySize);
     return arraySize;
 }
 
 
-static void*  Knob_reading(){
-    while (notDone){
-        int reading = getVoltage0Reading();
-        // printf("%d\n", reading);
-        calculateArraySize(reading);
-        // printf("%d, %d\n",reading, calculateArraySize(reading));
-    }
-    pthread_exit(0);
-}
+// static void*  Knob_reading(){
+//     while (notDone){
+//         int reading = getVoltage0Reading();
+//         // printf("%d\n", reading);
+//         calculateArraySize(reading);
+//         // printf("%d, %d\n",reading, calculateArraySize(reading));
+//     }
+//     pthread_exit(0);
+// }
 
 
-void Knob_start(void){
-    pthread_attr_t attr; 
-    pthread_attr_init(&attr);
+// void Knob_start(void){
+//     pthread_attr_t attr; 
+//     pthread_attr_init(&attr);
 
-    int error = pthread_create(&tid, &attr, Knob_reading, NULL);
-    if (error != 0){
-        printf("Knob thread failed creation %s\n", strerror(error));
-    }else{
-        printf("Knob thread created successfully\n");
-    }
-}
+//     int error = pthread_create(&tid, &attr, Knob_reading, NULL);
+//     if (error != 0){
+//         printf("Knob thread failed creation %s\n", strerror(error));
+//     }else{
+//         printf("Knob thread created successfully\n");
+//     }
+// }
 
 
 
-void Knob_stop(void){
-    notDone = false;
-    printf("Exiting knob thread\n");
+// void Knob_stop(void){
+//     notDone = false;
+//     printf("Exiting knob thread\n");
 
-    pthread_join(tid, NULL);
-}
+//     pthread_join(tid, NULL);
+// }

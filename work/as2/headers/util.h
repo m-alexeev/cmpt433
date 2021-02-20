@@ -1,6 +1,6 @@
 #ifndef _UTIL_H_
 #define _UTIL_H_
 
-void sleepSecs(float secs);
+void Util_sleepForSeconds(float secs);
 
 #endif

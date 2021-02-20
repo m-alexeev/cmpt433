@@ -8,25 +8,25 @@
 #include "./headers/network.h"
 #include "./headers/shutdown.h"
 #include "./headers/display.h"
-#include "./headers/knob.h"
+#include "./headers/driver.h"
 
 int main(int argc, char* argv[]){
     
-    int size = 400; 
-    Sorter_setArrayLength(size);
     
     printf("Start\n");
+  
+    // Display_start();
+    Driver_start();
     Sorter_start(); 
-    Display_start();
-    Knob_start();
     Network_start();
 
-    Shutdown_wait();
 
+    Shutdown_wait();
+    
     Network_stop();
-    Knob_stop();
-    Display_stop(); 
     Sorter_stop();
+    Driver_stop();
+    // Display_stop(); 
 
     printf("Done!\n");
 

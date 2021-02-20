@@ -23,6 +23,7 @@ static struct sockaddr_in sinRemote;
 static unsigned int sin_len;
 
 
+
 static void sendReply(char* message){
     sin_len = sizeof(sinRemote);
     sendto( socketDescriptor,
@@ -50,12 +51,14 @@ static void sendCountText(){
 static void sendArrayText(){
     char MESSAGE_TX[MAX_LEN];
     memset(MESSAGE_TX,0,MAX_LEN);
+    int NETWORK_SAFETY_BUFFER = 7;
+
 
     int len = Sorter_getArrayLength();
     int * temparr = Sorter_getArrayData(&len);
     int messageLen = 0;
     for (int i = 0; i < len; i ++){
-        if (MAX_LEN - messageLen < 7){
+        if (MAX_LEN - messageLen < NETWORK_SAFETY_BUFFER){
             sendReply(MESSAGE_TX);
             memset(MESSAGE_TX, 0, MAX_LEN);
             messageLen = 0;
@@ -104,6 +107,16 @@ static void sendStop(){
     sendReply(MESSAGE_TX);
 }
 
+static void sendUnknownCommand(){
+    char MESSAGE_TX[MAX_LEN];
+    memset(MESSAGE_TX,0,MAX_LEN);
+
+    sprintf(MESSAGE_TX, "Unknown Command\n");
+    sendReply(MESSAGE_TX);
+}
+
+
+
 static void parseCommand(char* message){
 
     const char delim[2] = " "; 
@@ -114,28 +127,24 @@ static void parseCommand(char* message){
     while (token != NULL){
         if (!get && strcmp(token, "help\n") == 0){
             sendHelpText();
-        }
-        if (!get && strcmp(token, "count\n") == 0){
+        }else if (!get && strcmp(token, "count\n") == 0){
             sendCountText();
-        }
-
-        if (get && (strcmp(token, "array\n") == 0)){
+        }else if (get && (strcmp(token, "array\n") == 0)){
             sendArrayText();
         }else if (get && (strcmp(token, "length\n") == 0)){
             sendArrayLength();
         }else if (get){
             int index = atoi(token);
             sendArrayData(index);
-        }
-        if (strcmp(token, "get") == 0){
+        }else if (strcmp(token, "get") == 0){
             get = true;
-        }
-
-        if (!get && strcmp(token, "stop\n") == 0){
+        }else if (!get && strcmp(token, "stop\n") == 0){
+            notDone = false;
             sendStop();
             Shutdown_trigger();
+        }else{
+            sendUnknownCommand();
         }
-
         token = strtok(NULL, delim);
     }
 }
@@ -187,7 +196,6 @@ void Network_start(void){
 
 
 void Network_stop(void){
-    notDone = false;
     printf("Exiting network thread\n");
 
     pthread_join(tid, NULL);
