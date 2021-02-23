@@ -7,8 +7,8 @@
 #define EXPORT "/sys/class/gpio/export"
 
 
-void Util_sleepForSeconds(float seconds)
+void Util_sleepForSeconds(float seconds, long nanoseconds)
 {
-    struct timespec reqDelay = {seconds};
+    struct timespec reqDelay = {seconds, nanoseconds};
     nanosleep(&reqDelay, (struct timespec *)NULL);
 }

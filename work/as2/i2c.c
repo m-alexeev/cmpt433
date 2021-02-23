@@ -5,6 +5,12 @@
 #include <sys/ioctl.h>
 #include <linux/i2c.h>
 #include <linux/i2c-dev.h>
+#include <pthread.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+#include "./headers/display.h"
 
 
 #define I2CDRV_LINUX_BUS0 "/dev/i2c-0"
@@ -18,16 +24,12 @@
 #define REG_OUTA 0x14
 #define REG_OUTB 0x15
 
-#include "./headers/i2c.h"
 
-
-// Code used from the example given by Dr. Brian Fraser 
-
-int initI2cBus(char* bus, int address)
+int I2C_initI2cBus(char* bus, int address)
 {
 	//Set GPIO pins to I2C
-	system("config-pin P9_17");
-	system("config-pin P9_18");
+	system("config-pin P9_17 i2c");
+	system("config-pin P9_18 i2c");
 
 
 	int i2cFileDesc = open(bus, O_RDWR);
@@ -46,7 +48,7 @@ int initI2cBus(char* bus, int address)
 }
 
 
-void writeI2cReg(int i2cFileDesc, unsigned char regAddr, unsigned char value)
+void I2C_writeI2cReg(int i2cFileDesc, unsigned char regAddr, unsigned char value)
 {
 	unsigned char buff[2];
 	buff[0] = regAddr;

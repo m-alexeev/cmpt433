@@ -33,14 +33,23 @@ static void* Driver_main(){
         long long sortedArraysStart = Sorter_getNumArraysSorted();
 
         //2. Sleep for 1 second 
-        Util_sleepForSeconds(SEED_TIME);
+        Util_sleepForSeconds(SEED_TIME, 0);
         //3. Get num arrays  again and calc difference
         long long sortedArraysEnd = Sorter_getNumArraysSorted();
 
         //4. Show size on screen
         long long arraysPerSecond = sortedArraysEnd - sortedArraysStart;
-        
-        printf("%llu\n", arraysPerSecond);
+
+        if (arraysPerSecond > 99){
+            arraysPerSecond = 99;
+        }
+
+        int leftDigit = arraysPerSecond / 10; 
+        int rightDigit = arraysPerSecond % 10;
+
+            Display_setDigit(LEFT_DIGIT,leftDigit);
+        Display_setDigit(RIGHT_DIGIT, rightDigit);
+
 
     }
     pthread_exit(0);

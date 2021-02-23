@@ -4,7 +4,6 @@
 
 #include "./headers/sorter.h"
 #include "./headers/util.h"
-#include "./headers/i2c.h"
 #include "./headers/network.h"
 #include "./headers/shutdown.h"
 #include "./headers/display.h"
@@ -15,7 +14,7 @@ int main(int argc, char* argv[]){
     
     printf("Start\n");
   
-    // Display_start();
+    Display_start();
     Driver_start();
     Sorter_start(); 
     Network_start();
@@ -26,7 +25,7 @@ int main(int argc, char* argv[]){
     Network_stop();
     Sorter_stop();
     Driver_stop();
-    // Display_stop(); 
+    Display_stop(); 
 
     printf("Done!\n");
 

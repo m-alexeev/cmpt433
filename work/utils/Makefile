@@ -1,6 +1,6 @@
-OUTFILE = sorter
+OUTFILE = display
 OUTDIR = $(HOME)/cmpt433/public/myApps
-TARGETS = main.c sorter.c util.c i2c.c network.c shutdown.c driver.c display.c knob.c gpio.c
+TARGETS = segDisplay.c
 
 
 CROSS_COMPILE = arm-linux-gnueabihf-

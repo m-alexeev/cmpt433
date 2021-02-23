@@ -6,11 +6,13 @@
 pthread_mutex_t exit_mutex = PTHREAD_MUTEX_INITIALIZER;
 pthread_cond_t  exit_cond = PTHREAD_COND_INITIALIZER;
 
-static bool exiting = false;
+static bool shutdown = false;
 
+
+//Used cmpt300 for reference
 void Shutdown_wait(){
     pthread_mutex_lock(&exit_mutex);{
-        while(!exiting){
+        while(!shutdown){
             pthread_cond_wait(&exit_cond, &exit_mutex);
         }
     }
@@ -20,7 +22,7 @@ void Shutdown_wait(){
 
 void Shutdown_trigger(){
     pthread_mutex_lock(&exit_mutex);{
-        exiting = true; 
+        shutdown = true; 
         pthread_cond_signal(&exit_cond);
     }
     pthread_mutex_unlock(&exit_mutex);
