@@ -89,6 +89,7 @@ static void sendArrayData(int index){
         sprintf(MESSAGE_TX,"Value %d = %d\n",index ,temp[index - 1]);
     }
     sendReply(MESSAGE_TX);
+    free(temp);
 }
 
 static void sendArrayLength(){
