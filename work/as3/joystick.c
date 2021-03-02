@@ -12,13 +12,33 @@ static pthread_t  tid;
 static bool notDone = true;
 
 static void Joystick_initialize(void);
+static int Joystick_read(char* filename);
 
+static const JoystickDirectionInfo JOYSTICK_MAPPING[JOYSTICK_COUNT] = {
+    {DIRECTION_UP, JOYSTICK_UP_PIN},
+    {DIRECTION_DOWN, JOYSTICK_DOWN_PIN},
+    {DIRECTION_LEFT, JOYSTICK_LEFT_PIN},
+    {DIRECTION_RIGHT, JOYSTICK_RIGHT_PIN},
+    {DIRECTION_PRESS, JOYSTICK_PRESS_PIN},
+};
 
 
 static void* Joystick_main(){
-    //Export All pins 
+    
+    int MAX_FILENAME_LEN = 50;
+    
+    //Export All pins and set direction to read
     Joystick_initialize();
+    
     while(notDone){
+        //Read joysticks for input
+        for (int dir = DIRECTION_UP; dir <= DIRECTION_PRESS; dir ++){
+            char fileBuffer[MAX_FILENAME_LEN];
+            sprintf(fileBuffer, "%s%d/value", JOYSTICK_FILE_PREFIX, dir);
+            if (Joystick_read(fileBuffer) == 1){
+                printf("Direction: %d pressed\n", dir);
+            }
+        }
 
     }
     pthread_exit(0);
@@ -44,18 +64,33 @@ void Joystick_stop(){
 
 static void Joystick_initialize(){
     //Export All Joystick pins
-    Gpio_export(JOYSTICK_LEFT);
-    Gpio_export(JOYSTICK_RIGHT);
-    Gpio_export(JOYSTICK_DOWN);
-    Gpio_export(JOYSTICK_UP);
-    Gpio_export(JOYSTICK_PRESS);
-
+    for (int dir = DIRECTION_UP; dir <= DIRECTION_PRESS; dir ++){
+        printf("%d\n", JOYSTICK_MAPPING[dir].pinNumber);
+    }
+   
     //Sleep for 300 ms before writing 
     Util_sleepForSeconds(0, 3E8);
+    printf("Joysticks exported\n");
+    
+    //Set the direction for reading the pin
+    for (int dir = DIRECTION_UP; dir <= DIRECTION_PRESS; dir ++){
+        Gpio_write(JOYSTICK_MAPPING[dir].pinNumber, DIR_READING);
+    }
+  
+}
 
-    Gpio_write(JOYSTICK_LEFT, DIRECTION_OUT);
-    Gpio_write(JOYSTICK_RIGHT, DIRECTION_OUT);
-    Gpio_write(JOYSTICK_UP, DIRECTION_OUT);
-    Gpio_write(JOYSTICK_DOWN, DIRECTION_OUT);
-    Gpio_write(JOYSTICK_PRESS, DIRECTION_OUT);
+static int Joystick_read(char* fileName){
+    FILE *pFile = fopen(fileName, MODE_R);
+    if (pFile == NULL){
+        printf("ERROR: Unable to open file (%s) for read\n", fileName);
+        exit(-1);
+    }
+
+    const int MAX_LENGTH = 1024; 
+    char buff[MAX_LENGTH];
+    fgets(buff, MAX_LENGTH, pFile);
+
+    fclose(pFile);
+    int joystickDirection = atoi(buff);
+    return joystickDirection;
 }
