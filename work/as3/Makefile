@@ -1,7 +1,6 @@
-OUTFILE_MAIN = sorter
-OUTFILE_DEBUG = noworky
+OUTFILE_MAIN = music
 OUTDIR = $(HOME)/cmpt433/public/myApps
-TARGETS_MAIN = gpio.c joystick.c
+TARGETS_MAIN = main.c gpio.c joystick.c shutdown.c util.c
 
 
 CROSS_COMPILE = arm-linux-gnueabihf-
