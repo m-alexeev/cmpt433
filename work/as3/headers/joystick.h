@@ -26,7 +26,7 @@ enum JOYSTICK_DIRECTION{
 typedef struct JoystickDirectionInfo{
     const int JOYSTICK_DIRECTION; 
     const int pinNumber;
-}JoystickDirectionInfo;
+}JoystickDirInfo;
 
 
 void Joystick_start(void);
