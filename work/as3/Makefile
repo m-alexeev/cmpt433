@@ -14,6 +14,11 @@ app:
 	@echo "Making music app"
 	$(CC_C) $(CFLAGS) $(TARGETS_MAIN) -o $(OUTDIR)/$(OUTFILE_MAIN) -lpthread -lm 
 
+wav: 
+	@echo "Copying Music"
+	mkdir -p $(OUTDIR)/beatbox-wav-files/ 
+	cp -R beatbox-wave-files/* $(OUTDIR)/beatbox-wav-files/ 
+
 
 done:
 	@echo "Finished Build"

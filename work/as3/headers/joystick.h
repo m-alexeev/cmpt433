@@ -13,13 +13,16 @@
 
 #define JOYSTICK_FILE_PREFIX "/sys/class/gpio/gpio"
 
-enum JOYSTICK_DIRECTION{
+#define HOLD_INTERVAL 6E8
+
+enum eJoystickDirection{
     DIRECTION_UP = 0,
     DIRECTION_DOWN,
     DIRECTION_LEFT,
     DIRECTION_RIGHT,
     DIRECTION_PRESS,
-    JOYSTICK_COUNT,
+    NUM_DIRECTIONS,
+    DIRECTION_NONE,
 };
 
 

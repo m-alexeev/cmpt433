@@ -12,7 +12,7 @@ static pthread_t  tid;
 static bool notDone = true;
 int MAX_FILENAME_LEN = 50;
 
-static const JoystickDirInfo JOYSTICK_MAPPING[JOYSTICK_COUNT] = {
+static const JoystickDirInfo JOYSTICK_MAPPING[NUM_DIRECTIONS] = {
     {DIRECTION_UP, JOYSTICK_UP_PIN},
     {DIRECTION_DOWN, JOYSTICK_DOWN_PIN},
     {DIRECTION_LEFT, JOYSTICK_LEFT_PIN},
@@ -24,7 +24,7 @@ static const JoystickDirInfo JOYSTICK_MAPPING[JOYSTICK_COUNT] = {
 //Initialize static functions
 static void Joystick_initialize(void);
 static int Joystick_read(char* filename);
-static bool Joystick_isPressed(int direction);
+static int Joystick_getDirection();
 
 static void* Joystick_main(){
     
@@ -33,13 +33,26 @@ static void* Joystick_main(){
     Joystick_initialize();
     
     while(notDone){
-
+        int joystickDirection = DIRECTION_NONE;
+        
+        //Wait for release
+        while(Joystick_getDirection() != DIRECTION_NONE){}
             
-
         //Read joysticks for input
-        for (int dir = DIRECTION_UP; dir <= DIRECTION_PRESS; dir ++){
-            Joystick_isPressed(dir);
+        bool holding = true;
+        while (holding){
+            joystickDirection = Joystick_getDirection();
+            if (joystickDirection != DIRECTION_NONE){
+                printf("Joystick direction: %d\n", joystickDirection);
+                Util_sleepForSeconds (0, HOLD_INTERVAL);
+
+                holding = Joystick_getDirection() == joystickDirection; 
+                printf("holding %d\n", holding);
+
+            }
         }
+
+
     }
     pthread_exit(0);
 }
@@ -95,11 +108,16 @@ static int Joystick_read(char* fileName){
     return joystickDirection;
 }
 
-static bool Joystick_isPressed(int dir){
+static int Joystick_getDirection(){
     char fileBuffer[MAX_FILENAME_LEN];
-    sprintf(fileBuffer, "%s%d/value", JOYSTICK_FILE_PREFIX, JOYSTICK_MAPPING[dir].pinNumber);
-    if (Joystick_read(fileBuffer) == 0){
-        return true;
+
+    for (int dir = DIRECTION_UP; dir < NUM_DIRECTIONS; dir ++){
+        memset(fileBuffer, 0, MAX_FILENAME_LEN);
+        
+        sprintf(fileBuffer, "%s%d/value", JOYSTICK_FILE_PREFIX, JOYSTICK_MAPPING[dir].pinNumber);
+        if (Joystick_read(fileBuffer) == 0){
+            return dir;
+        }
     }
-    return false;
+    return DIRECTION_NONE;
 }
