@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <string.h>
+#include <fcntl.h>
 
 #include "headers/joystick.h"
 #include "headers/gpio.h"
@@ -36,7 +37,7 @@ void Joystick_initialize(){
 
 
 int Joystick_read(char* fileName){
-    FILE *pFile = fopen(fileName, MODE_R);
+    FILE *pFile = fopen(fileName, O_RDONLY );
     if (pFile == NULL){
         printf("ERROR: Unable to open file (%s) for read\n", fileName);
         exit(-1);

@@ -13,6 +13,8 @@
 static pthread_t  tid; 
 static bool notDone = true;
 
+#define REG_X_1 0x01 
+#define REG_X_2 0x00
 
 static void* Input_main(){    
     //Export All pins and set direction to read
@@ -25,6 +27,12 @@ static void* Input_main(){
 
 
     while(notDone){
+
+        unsigned char regA = I2C_readI2cReg(i2cFileDesc, 0x0D);
+        unsigned char regB = I2C_readI2cReg(i2cFileDesc, REG_X_2);
+
+        printf("%0x%0x  \n", regA,regB);
+        Util_sleepForSeconds(1,0);
         // int joystickDirection = DIRECTION_NONE;
         
         // //Wait for release

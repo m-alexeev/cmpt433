@@ -10,7 +10,7 @@
 #define I2CDRV_LINUX_BUS2 "/dev/i2c-2"
 
 #define I2C_DEVICE_ADDRESS_DISPLAY 0x20
-#define I2C_DEVICE_ADDRESS_ACCEL 0x1C
+#define I2C_DEVICE_ADDRESS_ACCEL 0x1c
 
 #define REG_DIRA 0x00
 #define REG_DIRB 0x01
@@ -25,6 +25,6 @@ int I2C_initI2cBus(char* bus, int address);
 
 void I2C_writeI2cReg(int i2cFileDesc, unsigned char regAddr, unsigned char value);
 
-void I2C_readI2cReg(int i2cFiledDesc, unsigned char regAddr);
+unsigned char I2C_readI2cReg(int i2cFiledDesc, unsigned char regAddr);
 
 #endif

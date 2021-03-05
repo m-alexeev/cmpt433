@@ -12,16 +12,12 @@
 
 
 
-
-
-
 int I2C_initI2cBus(char* bus, int address)
 {
 	//Set GPIO pins to I2C
-	system("config-pin P9_17 i2c");
-	system("config-pin P9_18 i2c");
+	// system("config-pin P9_17 i2c");
+	// system("config-pin P9_18 i2c");
 
-	
 
 	int i2cFileDesc = open(bus, O_RDWR);
 	if (i2cFileDesc < 0) {
@@ -51,7 +47,7 @@ void I2C_writeI2cReg(int i2cFileDesc, unsigned char regAddr, unsigned char value
 	}
 }
 
-unsigned char readI2cReg(int i2cFileDesc, unsigned char regAddr){
+unsigned char I2C_readI2cReg(int i2cFileDesc, unsigned char regAddr){
 
 	int res = write(i2cFileDesc, &regAddr,sizeof(regAddr));
 	if (res != sizeof(regAddr)){
