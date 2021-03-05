@@ -1,6 +1,5 @@
 #ifndef _JOYSTICK_H_
-#define _JOYSTICK_H_ 
-
+#define _JOYSTICK_H_
 
 #define JOYSTICK_LEFT_PIN   65
 #define JOYSTICK_RIGHT_PIN  47
@@ -11,9 +10,10 @@
 #define DIR_WRITING "out"
 #define DIR_READING "in"
 
+#define MODE_R "r"
+
 #define JOYSTICK_FILE_PREFIX "/sys/class/gpio/gpio"
 
-#define HOLD_INTERVAL 6E8
 
 enum eJoystickDirection{
     DIRECTION_UP = 0,
@@ -32,8 +32,15 @@ typedef struct JoystickDirectionInfo{
 }JoystickDirInfo;
 
 
-void Joystick_start(void);
+void Joystick_initialize(void);
 
-void Joystick_stop(void);
+int Joystick_read(char* filename);
 
-#endif // !_JOYSTICK_H_
+
+int Joystick_getDirection();
+
+
+
+
+
+#endif // !_JOYSTICK_H

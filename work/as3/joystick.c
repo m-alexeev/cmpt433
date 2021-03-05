@@ -1,15 +1,11 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include <string.h>
-#include <pthread.h>
 #include <stdbool.h>
+#include <string.h>
 
 #include "headers/joystick.h"
 #include "headers/gpio.h"
 #include "headers/util.h"
-
-static pthread_t  tid; 
-static bool notDone = true;
 int MAX_FILENAME_LEN = 50;
 
 static const JoystickDirInfo JOYSTICK_MAPPING[NUM_DIRECTIONS] = {
@@ -20,62 +16,7 @@ static const JoystickDirInfo JOYSTICK_MAPPING[NUM_DIRECTIONS] = {
     {DIRECTION_PRESS, JOYSTICK_PRESS_PIN},
 };
 
-
-//Initialize static functions
-static void Joystick_initialize(void);
-static int Joystick_read(char* filename);
-static int Joystick_getDirection();
-
-static void* Joystick_main(){
-    
-    
-    //Export All pins and set direction to read
-    Joystick_initialize();
-    
-    while(notDone){
-        int joystickDirection = DIRECTION_NONE;
-        
-        //Wait for release
-        while(Joystick_getDirection() != DIRECTION_NONE){}
-            
-        //Read joysticks for input
-        bool holding = true;
-        while (holding){
-            joystickDirection = Joystick_getDirection();
-            if (joystickDirection != DIRECTION_NONE){
-                printf("Joystick direction: %d\n", joystickDirection);
-                Util_sleepForSeconds (0, HOLD_INTERVAL);
-
-                holding = Joystick_getDirection() == joystickDirection; 
-                printf("holding %d\n", holding);
-
-            }
-        }
-
-
-    }
-    pthread_exit(0);
-}
-
-void Joystick_start(){
-    pthread_attr_t attr; 
-    pthread_attr_init(&attr);
-
-    int error = pthread_create(&tid, &attr, Joystick_main, NULL);
-    if (error != 0){
-        printf("Joystick thread failed creation %s\n", strerror(error));
-    }else{
-        printf("Joystick thread created successfully\n");
-    }
-}
-
-void Joystick_stop(){
-    pthread_join(tid,NULL);
-}
-
-
-
-static void Joystick_initialize(){
+void Joystick_initialize(){
     //Export All Joystick pins
     for (int dir = DIRECTION_UP; dir <= DIRECTION_PRESS; dir ++){
         Gpio_export(JOYSTICK_MAPPING[dir].pinNumber);
@@ -92,7 +33,9 @@ static void Joystick_initialize(){
   
 }
 
-static int Joystick_read(char* fileName){
+
+
+int Joystick_read(char* fileName){
     FILE *pFile = fopen(fileName, MODE_R);
     if (pFile == NULL){
         printf("ERROR: Unable to open file (%s) for read\n", fileName);
@@ -108,7 +51,7 @@ static int Joystick_read(char* fileName){
     return joystickDirection;
 }
 
-static int Joystick_getDirection(){
+int Joystick_getDirection(){
     char fileBuffer[MAX_FILENAME_LEN];
 
     for (int dir = DIRECTION_UP; dir < NUM_DIRECTIONS; dir ++){

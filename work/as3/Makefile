@@ -1,6 +1,6 @@
 OUTFILE_MAIN = music
 OUTDIR = $(HOME)/cmpt433/public/myApps
-TARGETS_MAIN = main.c gpio.c joystick.c shutdown.c util.c
+TARGETS_MAIN = main.c gpio.c input.c i2c.c shutdown.c util.c joystick.c
 
 
 CROSS_COMPILE = arm-linux-gnueabihf-
