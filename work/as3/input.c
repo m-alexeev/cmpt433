@@ -31,7 +31,7 @@ static void* Input_main(){
     //Get I2c file descriptor and set the Accelerator mode to active  
     int i2cFileDesc =  I2C_initI2cBus(I2CDRV_LINUX_BUS1, I2C_DEVICE_ADDRESS_ACCEL);
 
-    I2C_writeI2cReg(i2cFileDesc, REG_ACCEL_ACT, 0x01);
+    I2C_writeI2cReg(i2cFileDesc, CTRL_REG1, 0x01);
 
 
     while(notDone){
@@ -44,9 +44,12 @@ static void* Input_main(){
         accelReadings.y = (buffer[REG_Y_MSB] << 8) | (buffer[REG_Y_LSB]);
         accelReadings.z = (buffer[REG_Z_MSB] << 8) | (buffer[REG_Z_LSB]);
 
-        printf("x:%-8d y:%-8d z:%-8d\n", accelReadings.x, accelReadings.y, accelReadings.z);
+        printf("x:%-8d y:%-8d z:%-8d\n", 
+            accelReadings.x / 16, 
+            accelReadings.y / 16, 
+            (accelReadings.z / 16) );
 
-        Util_sleepForSeconds(0, 5E5);
+        Util_sleepForSeconds(0, 2E8);
         // int joystickDirection = DIRECTION_NONE;
         
         // //Wait for release

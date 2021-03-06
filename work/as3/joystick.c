@@ -23,7 +23,7 @@ void Joystick_initialize(){
         Gpio_export(JOYSTICK_MAPPING[dir].pinNumber);
     }
    
-    //Sleep for 300 ms before writing 
+    //Sleep for 400 ms before writing 
     Util_sleepForSeconds(0, 4E8);
     printf("Joysticks exported\n");
     

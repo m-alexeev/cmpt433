@@ -17,8 +17,7 @@
 #define REG_OUTA 0x14
 #define REG_OUTB 0x15
 
-#define REG_ACCEL_ACT 0x2A
-
+#define CTRL_REG1 0x2A
 
 
 int I2C_initI2cBus(char* bus, int address);
