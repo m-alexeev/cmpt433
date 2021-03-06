@@ -3,6 +3,8 @@
 #include <string.h>
 #include <pthread.h>
 #include <stdbool.h>
+#include <fcntl.h>
+#include <unistd.h>
 
 #include "headers/joystick.h"
 #include "headers/input.h"
@@ -13,8 +15,14 @@
 static pthread_t  tid; 
 static bool notDone = true;
 
-#define REG_X_1 0x01 
-#define REG_X_2 0x00
+#define REG_X_MSB 0x01 
+#define REG_X_LSB 0x02
+#define REG_Y_MSB 0x03
+#define REG_Y_LSB 0x04
+#define REG_Z_MSB 0x05
+#define REG_Z_LSB 0x06
+
+#define NUM_REGISTERS 7
 
 static void* Input_main(){    
     //Export All pins and set direction to read
@@ -28,11 +36,17 @@ static void* Input_main(){
 
     while(notDone){
 
-        unsigned char regA = I2C_readI2cReg(i2cFileDesc, 0x0D);
-        unsigned char regB = I2C_readI2cReg(i2cFileDesc, REG_X_2);
+        
+        char* buffer = I2C_readI2cReg(i2cFileDesc, 0x00, NUM_REGISTERS);
 
-        printf("%0x%0x  \n", regA,regB);
-        Util_sleepForSeconds(1,0);
+        Accelerometer_t accelReadings; 
+        accelReadings.x = (buffer[REG_X_MSB] << 8) | (buffer[REG_X_LSB]);
+        accelReadings.y = (buffer[REG_Y_MSB] << 8) | (buffer[REG_Y_LSB]);
+        accelReadings.z = (buffer[REG_Z_MSB] << 8) | (buffer[REG_Z_LSB]);
+
+        printf("x:%-8d y:%-8d z:%-8d\n", accelReadings.x, accelReadings.y, accelReadings.z);
+
+        Util_sleepForSeconds(0, 5E5);
         // int joystickDirection = DIRECTION_NONE;
         
         // //Wait for release
@@ -49,7 +63,10 @@ static void* Input_main(){
         //         holding = Joystick_getDirection() == joystickDirection; 
         //     }
         // }
+        free(buffer);
     }
+    //Exit thread
+    close (i2cFileDesc);
     pthread_exit(0);
 }
 

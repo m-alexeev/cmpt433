@@ -25,6 +25,6 @@ int I2C_initI2cBus(char* bus, int address);
 
 void I2C_writeI2cReg(int i2cFileDesc, unsigned char regAddr, unsigned char value);
 
-unsigned char I2C_readI2cReg(int i2cFiledDesc, unsigned char regAddr);
+char* I2C_readI2cReg(int i2cFiledDesc, unsigned char regAddr, int numBytes);
 
 #endif

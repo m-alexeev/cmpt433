@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <stdint.h>
 
 
 
@@ -47,20 +48,22 @@ void I2C_writeI2cReg(int i2cFileDesc, unsigned char regAddr, unsigned char value
 	}
 }
 
-unsigned char I2C_readI2cReg(int i2cFileDesc, unsigned char regAddr){
+char* I2C_readI2cReg(int i2cFileDesc, unsigned char regAddr, int numBytes){
 
 	int res = write(i2cFileDesc, &regAddr,sizeof(regAddr));
+	
 	if (res != sizeof(regAddr)){
 		perror("I2C: Unable to write to i2c register");
 		exit(1);
 	}
 
-	char value = 0; 
-	res = read(i2cFileDesc, &value, sizeof(value));
+	// char buffer[10];
+	char* buffer = (char*)malloc(numBytes); 
+	res = read(i2cFileDesc, buffer, numBytes);
 
-	if (res != sizeof(value)){
+	if (res != numBytes){
 		perror("I2C: Unable to read from i2c register");
 		exit(1);
 	}
-	return value;
+	return buffer;
 }

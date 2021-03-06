@@ -24,7 +24,7 @@ void Joystick_initialize(){
     }
    
     //Sleep for 300 ms before writing 
-    Util_sleepForSeconds(0, 3E8);
+    Util_sleepForSeconds(0, 4E8);
     printf("Joysticks exported\n");
     
     //Set the direction for reading the pin
