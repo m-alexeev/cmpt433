@@ -36,7 +36,7 @@ static void sendHelpText(){
     \ncount       -- display number arrays sorted.\
     \nget length  -- display length of array currently being sorted.\
     \nget array   -- display the full array being sorted.\
-    \nget 10      -- display the tenth element of array currently being sorted.\
+    \nget n       -- display the n-th element of array currently being sorted.\
     \nstop        -- cause the server program to end.\n";
     sendReply(MESSAGE_TX);
 }
@@ -123,28 +123,35 @@ static void parseCommand(char* message){
     const char delim[2] = " "; 
     char * token; 
     bool get = false; 
+    bool sent = false;
 
     token = strtok(message, delim);
-    while (token != NULL){
+    while (token != NULL && !sent){
         if (!get && strcmp(token, "help\n") == 0){
             sendHelpText();
+            sent = true; 
         }else if (!get && strcmp(token, "count\n") == 0){
             sendCountText();
+            sent = true; 
         }else if (get && (strcmp(token, "array\n") == 0)){
             sendArrayText();
+            sent = true; 
         }else if (get && (strcmp(token, "length\n") == 0)){
             sendArrayLength();
+            sent = true; 
         }else if (get){
             int index = atoi(token);
             sendArrayData(index);
+            sent = true; 
         }else if (strcmp(token, "get") == 0){
-            get = true;
+            get = true;  
         }else if (!get && strcmp(token, "stop\n") == 0){
             notDone = false;
             sendStop();
             Shutdown_trigger();
         }else{
             sendUnknownCommand();
+            sent = true; 
         }
         token = strtok(NULL, delim);
     }

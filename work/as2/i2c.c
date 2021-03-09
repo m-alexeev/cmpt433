@@ -31,6 +31,7 @@ int I2C_initI2cBus(char* bus, int address)
 	system("config-pin P9_17 i2c");
 	system("config-pin P9_18 i2c");
 
+	
 
 	int i2cFileDesc = open(bus, O_RDWR);
 	if (i2cFileDesc < 0) {

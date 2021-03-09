@@ -19,7 +19,7 @@ int main(int argc, char* argv[]){
     Sorter_start(); 
     Network_start();
 
-
+    // Wait for shutdown from network thread
     Shutdown_wait();
     
     Network_stop();
@@ -27,6 +27,6 @@ int main(int argc, char* argv[]){
     Driver_stop();
     Display_stop(); 
 
-    printf("Done!\n");
+    printf("Finished!\n");
 
 }

@@ -59,6 +59,9 @@ static void* Display_main(){
 
 	Digit curDigit = displayDigits[0];
 
+	Gpio_write(GPIO_PIN_LEFT_DIGIT, GPIO_OUT);
+	Gpio_write(GPIO_PIN_RIGHT_DIGIT, GPIO_OUT);
+
 	//Thread Loop
 	while(notDone){
 		Gpio_write(GPIO_PIN_RIGHT_DIGIT, DIGIT_OFF);

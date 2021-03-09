@@ -24,6 +24,35 @@ static bool notDone = true;
 
 #define NUM_REGISTERS 7
 
+
+static void getAccelerometerReadings(int i2cFileDesc, float arr[]);
+
+static void getAccelerometerReadings(int i2cFileDesc, float arr[]){
+    Accelerometer_t accelReadings; 
+    char* buffer = I2C_readI2cReg(i2cFileDesc, 0x00, NUM_REGISTERS);
+    
+    accelReadings.x = (buffer[REG_X_MSB] << 8) | (buffer[REG_X_LSB]) ;
+    accelReadings.y = (buffer[REG_Y_MSB] << 8) | (buffer[REG_Y_LSB]) ;
+    accelReadings.z = (buffer[REG_Z_MSB] << 8) | (buffer[REG_Z_LSB]) ;
+
+    accelReadings.x >>= 4;
+    accelReadings.y >>= 4;
+    accelReadings.z >>= 4;
+
+    float x = (float)accelReadings.x / 1024;
+    float y = (float)accelReadings.y / 1024;
+    float z = (float)accelReadings.z / 1024;
+
+    arr[0] = x;
+    arr[1] = y; 
+    arr[2] = z;
+    
+    free(buffer);
+
+}
+
+
+
 static void* Input_main(){    
     //Export All pins and set direction to read
     Joystick_initialize();
@@ -36,38 +65,33 @@ static void* Input_main(){
 
     while(notDone){
 
+    
         
-        char* buffer = I2C_readI2cReg(i2cFileDesc, 0x00, NUM_REGISTERS);
+        bool holding = true;    
+        // Read joystick / accel for input 
+        while (true){
 
-        Accelerometer_t accelReadings; 
-        accelReadings.x = (buffer[REG_X_MSB] << 8) | (buffer[REG_X_LSB]);
-        accelReadings.y = (buffer[REG_Y_MSB] << 8) | (buffer[REG_Y_LSB]);
-        accelReadings.z = (buffer[REG_Z_MSB] << 8) | (buffer[REG_Z_LSB]);
-
-        printf("x:%-8d y:%-8d z:%-8d\n", 
-            accelReadings.x / 16, 
-            accelReadings.y / 16, 
-            (accelReadings.z / 16) );
-
-        Util_sleepForSeconds(0, 2E8);
-        // int joystickDirection = DIRECTION_NONE;
-        
-        // //Wait for release
-        // while(Joystick_getDirection() != DIRECTION_NONE){}
-            
-        // //Read joysticks for input
-        // bool holding = true;
-        // while (holding){
-        //     joystickDirection = Joystick_getDirection();
-        //     if (joystickDirection != DIRECTION_NONE){
-        //         printf("Joystick direction: %d\n", joystickDirection);
-        //         Util_sleepForSeconds (0, HOLD_INTERVAL);
+            //Check for Joystick input 
+            int joystickDirection = Joystick_getDirection();            
+            holding = true;
+            while (joystickDirection != DIRECTION_NONE && holding){
+                printf("Joystick direction: %d\n", joystickDirection);
                 
-        //         holding = Joystick_getDirection() == joystickDirection; 
-        //     }
-        // }
-        free(buffer);
+                Util_sleepForSeconds (0, DEBOUNCE_JOYSTICK);
+                holding = Joystick_getDirection() == joystickDirection; 
+            }
+
+            float accels[3]; 
+
+            // Get accelerometer Readings        
+            getAccelerometerReadings(i2cFileDesc, accels);
+
+            printf("x:%-8.6f y:%-8.6f z:%-8.6f\n", accels[0],accels[1], accels[2]);
+            Util_sleepForSeconds(0, POLL_RATE);
+        }
     }
+
+
     //Exit thread
     close (i2cFileDesc);
     pthread_exit(0);
@@ -88,4 +112,6 @@ void Input_start(){
 void Input_stop(){
     pthread_join(tid,NULL);
 }
+
+
 

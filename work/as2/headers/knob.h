@@ -1,8 +1,10 @@
 #ifndef _KNOB_H_
 #define _KNOB_H_
 
-// void Knob_start(void);
-// void Knob_stop(void);
+/*
+    Module for reading the POT on the Zencape and transforming the readings into 
+    The piecewise array
+*/
 
 //Get current output voltage from the pot
 int Knob_getVoltage0Reading(void);

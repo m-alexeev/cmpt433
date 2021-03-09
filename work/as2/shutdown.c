@@ -9,7 +9,8 @@ pthread_cond_t  exit_cond = PTHREAD_COND_INITIALIZER;
 static bool shutdown = false;
 
 
-//Used cmpt300 for reference
+//Used cmpt300 conditional variables for reference
+
 void Shutdown_wait(){
     pthread_mutex_lock(&exit_mutex);{
         while(!shutdown){

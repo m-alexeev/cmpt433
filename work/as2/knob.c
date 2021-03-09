@@ -9,9 +9,6 @@
 
 #include "./headers/knob.h"
 
-//Threading 
-// static pthread_t  tid; 
-// static bool notDone = true;
 
 //Piecewise consts
 #define PIECEWISE_NUM_POINTS 10
@@ -70,39 +67,6 @@ int Knob_calculateArraySize(int reading){
 
     arraySize = floor(percentH * verticalDist) + ARRAY_SIZES[index];
 
-    // printf("%d\n", arraySize);
     return arraySize;
 }
 
-
-// static void*  Knob_reading(){
-//     while (notDone){
-//         int reading = getVoltage0Reading();
-//         // printf("%d\n", reading);
-//         calculateArraySize(reading);
-//         // printf("%d, %d\n",reading, calculateArraySize(reading));
-//     }
-//     pthread_exit(0);
-// }
-
-
-// void Knob_start(void){
-//     pthread_attr_t attr; 
-//     pthread_attr_init(&attr);
-
-//     int error = pthread_create(&tid, &attr, Knob_reading, NULL);
-//     if (error != 0){
-//         printf("Knob thread failed creation %s\n", strerror(error));
-//     }else{
-//         printf("Knob thread created successfully\n");
-//     }
-// }
-
-
-
-// void Knob_stop(void){
-//     notDone = false;
-//     printf("Exiting knob thread\n");
-
-//     pthread_join(tid, NULL);
-// }

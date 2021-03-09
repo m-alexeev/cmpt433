@@ -7,7 +7,7 @@
 #include "headers/joystick.h"
 #include "headers/gpio.h"
 #include "headers/util.h"
-int MAX_FILENAME_LEN = 50;
+int MAX_FILENAME_LEN = 80;
 
 static const JoystickDirInfo JOYSTICK_MAPPING[NUM_DIRECTIONS] = {
     {DIRECTION_UP, JOYSTICK_UP_PIN},
@@ -37,7 +37,7 @@ void Joystick_initialize(){
 
 
 int Joystick_read(char* fileName){
-    FILE *pFile = fopen(fileName, O_RDONLY );
+    FILE *pFile = fopen(fileName, "r");
     if (pFile == NULL){
         printf("ERROR: Unable to open file (%s) for read\n", fileName);
         exit(-1);

@@ -9,7 +9,9 @@ typedef struct Accelerometer_t{
 }Accelerometer_t;
 
 
-#define HOLD_INTERVAL 5E8
+#define POLL_RATE 1E7
+#define DEBOUNCE_JOYSTICK 3E8
+#define DEBOUNCE_ACCEL 3E8
 
 
 void Input_start(void);

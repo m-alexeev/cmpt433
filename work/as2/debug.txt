@@ -1,0 +1,66 @@
+(gdb) continue
+Continuing.
+Reading /lib/arm-linux-gnueabihf/libc.so.6 from remote target...
+Reading /lib/arm-linux-gnueabihf/56da1a1f1ec6abc2396f88e61efb139d91c6dc.debug from remote target...
+Reading /lib/arm-linux-gnueabihf/.debug/56da1a1f1ec6abc2396f88e61efb139d91c6dc.debug from remote target...
+Reading /usr/lib/debug//lib/arm-linux-gnueabihf/56da1a1f1ec6abc2396f88e61efb139d91c6dc.debug from remote target...
+Reading /usr/lib/debug/lib/arm-linux-gnueabihf//56da1a1f1ec6abc2396f88e61efb139d91c6dc.debug from remote target...
+Reading target:/usr/lib/debug/lib/arm-linux-gnueabihf//56da1a1f1ec6abc2396f88e61efb139d91c6dc.debug from remote target...
+
+Program received signal SIGSEGV, Segmentation fault.
+0x004005b6 in swapContent (d1=0x410ff8, d2=0x411050) at noworky.c:19
+19              *d1 = tmp;
+(gdb) bt
+#0  0x004005b6 in swapContent (d1=0x410ff8, d2=0x411050) at noworky.c:19
+#1  0x004005ee in tradeArrays (array1=0x412410, array2=0x412468, size=10) at noworky.c:29
+#2  0x004006f2 in main () at noworky.c:72
+(gdb) up
+#1  0x004005ee in tradeArrays (array1=0x412410, array2=0x412468, size=10) at noworky.c:29
+29                      swapContent(array1+i, array2+i);
+(gdb) list
+24       */
+25      void tradeArrays(double *array1, double *array2, int size)
+26      {
+27              unsigned int i;
+28              for (i = size-1; i >= 0; i--) {
+29                      swapContent(array1+i, array2+i);
+30              }
+31      }
+32
+33      /*
+(gdb) info local
+i = 4294966653
+(gdb) print i 
+$4 = 4294966653
+(gdb) print array1
+$5 = (double *) 0x412410
+(gdb) print array1 + 1
+$6 = (double *) 0x412418
+(gdb) print *(array1 + 1)
+$7 = 0
+(gdb) print *(array1 + 2)
+$8 = 0
+(gdb) print *(array1 + 3)
+$9 = 0
+(gdb) print *(array1)
+$10 = 0
+(gdb) print &(array1)
+$11 = (double **) 0xbefff534
+(gdb) print &(*array1)
+$12 = (double *) 0x412410
+(gdb) print &(**array1)
+$13 = 0
+(gdb) print array2
+$14 = (double *) 0x412468
+(gdb) print array2+1
+$15 = (double *) 0x412470
+(gdb) print *(array2+1)
+$16 = 2
+(gdb) print *(array2+2)
+$17 = 4
+(gdb) print *(array2+i)
+$18 = 2.073060418763849e-317
+
+
+//Comment: Almost immediately I noticed that the iterator variable "i" has gone way out of the scope of the array
+//I checked the array1 and array2 values and sure thing the value at array2+i was garbage memeory which caused the seg fault
