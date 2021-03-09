@@ -5,6 +5,7 @@
 #include <stdbool.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include <math.h>
 
 #include "headers/joystick.h"
 #include "headers/input.h"
@@ -86,7 +87,26 @@ static void* Input_main(){
             // Get accelerometer Readings        
             getAccelerometerReadings(i2cFileDesc, accels);
 
-            printf("x:%-8.6f y:%-8.6f z:%-8.6f\n", accels[0],accels[1], accels[2]);
+
+            bool hasAccel = false;
+
+            if (fabs(accels[0]) > 0.5){
+                printf("X Axis acceleration: %f\n",  fabs(accels[0]));
+                hasAccel = true;
+            }
+            if (fabs(accels[1]) > 0.5){
+                printf("Y Axis acceleration: %f\n", fabs(accels[1]));
+                hasAccel = true;
+            }
+            if (fabs(accels[2]) < 0.2){
+                printf("Z Axis acceleration: %f\n", fabs(accels[2]));
+                hasAccel = true;
+            }
+            if (hasAccel){
+                Util_sleepForSeconds(0, DEBOUNCE_ACCEL);
+            }
+
+            // printf("x:%-8.5f y:%-8.5f z:%-8.5f\n", accels[0],accels[1], accels[2]);
             Util_sleepForSeconds(0, POLL_RATE);
         }
     }
