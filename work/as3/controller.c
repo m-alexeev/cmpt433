@@ -29,12 +29,12 @@ static void noBeat(){
 static void rockBeat(){
     for (int i = 0; i < 4; i ++){
         float halfBeat = (60.0 / BPM / 2);
-        Mixer_queueSound(&beatArr[0]);
-        // if(i == 0){
-        //     Mixer_queueSound(&beatArr[1]);
-        // }if (i==2){
-        //     Mixer_queueSound(&beatArr[2]);
-        // }
+        Mixer_queueSound(&beatArr[1]);
+        if(i == 0){
+            Mixer_queueSound(&beatArr[0]);
+        }if (i==2){
+            Mixer_queueSound(&beatArr[2]);
+        }
         Util_sleepForSeconds(0, halfBeat * 1E9);
     }
 }

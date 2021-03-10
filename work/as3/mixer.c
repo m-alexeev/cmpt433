@@ -54,6 +54,7 @@ void Mixer_init(void){
 	//     sound bite.
 	for (int i = 0; i < MAX_SOUND_BITES; i ++){
 		soundBites[i].pSound = NULL;
+		soundBites[i].location = 0;
 	}
 
 	// Open the PCM output
@@ -139,18 +140,21 @@ void Mixer_queueSound(wavedata_t *pSound){
 	assert(pSound->numSamples > 0);
 	assert(pSound->pData);
 
+	bool foundSlot = false;
 	pthread_mutex_lock(&audioMutex);{
 	for(int i = 0; i< MAX_SOUND_BITES; i++){
 		if(soundBites[i].pSound == NULL){
 			soundBites[i].pSound = pSound;
-			printf("Placed data in slot\n");
-			return;
+			soundBites[i].location = 0;
+			foundSlot = true;
+			break;
 		}
 	}
 	}pthread_mutex_unlock(&audioMutex);
 
-	printf("No free slot for the audio file has been found!\n");
-	return;
+	if (!foundSlot){
+		printf("No free slot for the audio file has been found!\n");
+	}
 	// Insert the sound by searching for an empty sound bite spot
 	/*
 	 * REVISIT: Implement this:
@@ -236,23 +240,46 @@ void Mixer_setVolume(int newVolume){
 //    size: the number of values to store into playbackBuffer
 static void fillPlaybackBuffer(short *playbackBuffer, int size){
 
-	memset(playbackBuffer, 0, size);
+	memset(playbackBuffer, 0, size * sizeof(short));
 
-	short* buffer = malloc(size * sizeof(short));
+	// short* buffer = malloc(size * sizeof(short));
 	pthread_mutex_lock(&audioMutex);{
 		for(int i = 0; i < MAX_SOUND_BITES; i++){
-			if (soundBites[i].pSound != NULL){
-				//Add to buffer
-				buffer[soundBites[i].location] += *(soundBites[i].pSound->pData);
+			if(soundBites[i].pSound != NULL)
+		{
+			int offset = soundBites[i].location;
+			int data = 0;
+			int j = 0;
+			
+			while (j < playbackBufferSize && offset < soundBites[i].pSound->numSamples)
+			{
+				int data_offset = (int)soundBites[i].pSound->pData[offset];
+				data = ((int)playbackBuffer[j]) + data_offset;
+				
+				if(data < SHRT_MIN)
+				{
+					data = SHRT_MIN;
+				}
+				if(data > SHRT_MAX)
+				{
+					data = SHRT_MAX;
+				}
+
+				playbackBuffer[j] = (short)data;
+				offset++;
+				j++;
+				
+			}
+			soundBites[i].location = offset;
+			if(soundBites[i].location >= soundBites[i].pSound->numSamples)
+			{
+				soundBites[i].pSound = NULL;
 			}
 		}
-
+		}
 	}pthread_mutex_unlock(&audioMutex);
 	
-	for (int i = 0; i < size; i ++){
-		playbackBuffer[i] = buffer[i];
-	}
-	free(buffer);
+
 
 
 	/*
