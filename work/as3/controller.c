@@ -12,10 +12,13 @@
 static bool notDone = true;
 static pthread_t  tid; 
 
-
-
 static int BPM = 120;
 static int currentBeat = ROCK_BEAT;
+
+static wavedata_t beatArr[5]; 
+
+
+static void initializeBeatArray();
 
 
 
@@ -26,6 +29,12 @@ static void noBeat(){
 static void rockBeat(){
     for (int i = 0; i < 4; i ++){
         float halfBeat = (60.0 / BPM / 2);
+        Mixer_queueSound(&beatArr[0]);
+        // if(i == 0){
+        //     Mixer_queueSound(&beatArr[1]);
+        // }if (i==2){
+        //     Mixer_queueSound(&beatArr[2]);
+        // }
         Util_sleepForSeconds(0, halfBeat * 1E9);
     }
 }
@@ -40,6 +49,7 @@ void Controller_addBeat(int direction){
 
 static void* Controller_main(){
 
+    initializeBeatArray();
     while(notDone){
         //get Input , 
         //Queue Tracks 
@@ -63,7 +73,7 @@ static void* Controller_main(){
 
 
 void Controller_start(void){
- pthread_attr_t attr; 
+    pthread_attr_t attr; 
     pthread_attr_init(&attr);
 
     int error = pthread_create(&tid, &attr, Controller_main, NULL);
@@ -97,3 +107,8 @@ int Controller_getBPM(void){
     return BPM;
 }
 
+static void initializeBeatArray(){
+    Mixer_readWaveFileIntoMemory(SOURCE_BDRUM, &beatArr[0]);
+    Mixer_readWaveFileIntoMemory(SOURCE_HIHAT, &beatArr[1]);
+    Mixer_readWaveFileIntoMemory(SOURCE_SNARE, &beatArr[2]);
+}

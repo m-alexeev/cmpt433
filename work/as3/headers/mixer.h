@@ -10,7 +10,9 @@ typedef struct {
 
 #define MIXER_MAX_VOLUME 100
 
-
+#define SOURCE_BDRUM "beatbox-wav-files/100051__menegass__gui-drum-bd-hard.wav"
+#define SOURCE_HIHAT "beatbox-wav-files/100053__menegass__gui-drum-cc.wav"
+#define SOURCE_SNARE "beatbox-wav-files/100059__menegass__gui-drum-snare-soft.wav"
 
 // init() must be called before any other functions,
 // cleanup() must be called last to stop playback threads and free memory.

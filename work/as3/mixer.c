@@ -19,10 +19,6 @@ static snd_pcm_t *handle;
 
 // Audio Bites
 
-#define SOURCE_BDRUM "beatbox-wav-files/100051__menegass__gui-drum-bd-hard.wav"
-#define SOURCE_HIHAT "beatbox-wav-files/100053__menegass__gui-drum-cc.wav"
-#define SOURCE_SNARE "beatbox-wav-files/100059__menegass__gui-drum-snare-soft.wav"
-
 static unsigned long playbackBufferSize = 0;
 static short *playbackBuffer = NULL;
 
@@ -147,13 +143,14 @@ void Mixer_queueSound(wavedata_t *pSound){
 	for(int i = 0; i< MAX_SOUND_BITES; i++){
 		if(soundBites[i].pSound == NULL){
 			soundBites[i].pSound = pSound;
+			printf("Placed data in slot\n");
 			return;
 		}
 	}
 	}pthread_mutex_unlock(&audioMutex);
 
 	printf("No free slot for the audio file has been found!\n");
-
+	return;
 	// Insert the sound by searching for an empty sound bite spot
 	/*
 	 * REVISIT: Implement this:

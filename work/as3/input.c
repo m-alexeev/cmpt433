@@ -51,10 +51,7 @@ static void* Input_main(){
 
     I2C_writeI2cReg(i2cFileDesc, CTRL_REG1, 0x01);
 
-
     while(notDone){
-
-    
         
         bool holding = true;    
         // Read joystick / accel for input 
@@ -72,13 +69,9 @@ static void* Input_main(){
             float accels[3]; 
             // Get accelerometer Readings        
             getAccelerometerReadings(i2cFileDesc, accels);
-
-
-           
             parseAccelReadings(accels);
             
-
-            // printf("x:%-8.5f y:%-8.5f z:%-8.5f\n", accels[0],accels[1], accels[2]);
+            //Poll at 100HZ 
             Util_sleepForSeconds(0, POLL_RATE);
         }
     }
