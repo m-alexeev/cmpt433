@@ -6,23 +6,55 @@
 
 #include "headers/controller.h"
 #include "headers/util.h"
+#include "headers/mixer.h"
 
 
 static bool notDone = true;
 static pthread_t  tid; 
 
-static int BPM = 120;
 
+
+static int BPM = 120;
+static int currentBeat = ROCK_BEAT;
+
+
+
+static void noBeat(){
+    //Free playback buffer
+}
+
+static void rockBeat(){
+    for (int i = 0; i < 4; i ++){
+        float halfBeat = (60.0 / BPM / 2);
+        Util_sleepForSeconds(0, halfBeat * 1E9);
+    }
+}
+
+static void customBeat(){
+    //Add custom beat  
+}
+
+void Controller_addBeat(int direction){
+    return;
+}
 
 static void* Controller_main(){
 
     while(notDone){
         //get Input , 
         //Queue Tracks 
-
-        float halfBeat = (60.0 / BPM / 2);
-        printf("%0.2f Beat\n", halfBeat);
-        Util_sleepForSeconds(0, halfBeat * 1E9);
+        switch (currentBeat)
+        {
+        case NO_BEAT:
+            noBeat();
+            break;
+        case ROCK_BEAT:
+            rockBeat();
+            break;
+        case CUSTOM_BEAT:
+            customBeat();
+            break;
+        }
     }
 
     pthread_exit(0);
@@ -46,10 +78,20 @@ void Controller_stop(void){
     pthread_join(tid, NULL);
 }
 
-void Controller_setBPM(int bpm){
-    BPM = bpm;
+
+void Controller_setBeat(int beat){
+    currentBeat = (currentBeat + beat) % 3;
+    printf("%d\n",currentBeat);
 }
 
+int Controller_getBeat(void){
+    return currentBeat;
+}
+
+void Controller_setBPM(int bpm){
+    BPM = bpm;
+    printf("BPM: %d\n", BPM);
+}
 
 int Controller_getBPM(void){
     return BPM;

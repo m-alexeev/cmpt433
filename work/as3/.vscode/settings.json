@@ -4,6 +4,8 @@
         "joystick.h": "c",
         "string.h": "c",
         "type_traits": "c",
-        "pthread.h": "c"
+        "pthread.h": "c",
+        "mixer.h": "c",
+        "controller.h": "c"
     }
 }

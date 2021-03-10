@@ -228,6 +228,8 @@ void Mixer_setVolume(int newVolume){
     snd_mixer_selem_get_playback_volume_range(elem, &min, &max);
     snd_mixer_selem_set_playback_volume_all(elem, volume * max / 100);
 
+	printf("Volume: %d\n",volume);
+
     snd_mixer_close(handle);
 }
 

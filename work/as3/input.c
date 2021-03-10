@@ -12,6 +12,8 @@
 #include "headers/gpio.h"
 #include "headers/util.h"
 #include "headers/i2c.h"
+#include "headers/controller.h"
+#include "headers/mixer.h"
 
 static pthread_t  tid; 
 static bool notDone = true;
@@ -25,10 +27,19 @@ static bool notDone = true;
 
 #define NUM_REGISTERS 7
 
+#define XY_THRES 0.5
+#define Z_THRES 0.2
 
 static void getAccelerometerReadings(int i2cFileDesc, float arr[]);
+static void sendJoystickDirection(int direction);
+static void parseAccelReadings(float accels[]);
 
 
+#define BPM_CONTROL 5
+#define VOL_CONTROL 5
+
+#define MAX_BPM 300
+#define MIN_BPM 40
 
 
 static void* Input_main(){    
@@ -53,36 +64,19 @@ static void* Input_main(){
             int joystickDirection = Joystick_getDirection();            
             holding = true;
             while (joystickDirection != DIRECTION_NONE && holding){
-                printf("Joystick direction: %d\n", joystickDirection);
-                
+                sendJoystickDirection(joystickDirection);
                 Util_sleepForSeconds (0, DEBOUNCE_JOYSTICK);
                 holding = Joystick_getDirection() == joystickDirection; 
             }
 
             float accels[3]; 
-
             // Get accelerometer Readings        
             getAccelerometerReadings(i2cFileDesc, accels);
 
-            //TODO: REFACTOR
 
-            bool hasAccel = false;
-
-            if (fabs(accels[0]) > 0.5){
-                printf("X Axis acceleration: %f\n",  fabs(accels[0]));
-                hasAccel = true;
-            }
-            if (fabs(accels[1]) > 0.5){
-                printf("Y Axis acceleration: %f\n", fabs(accels[1]));
-                hasAccel = true;
-            }
-            if (fabs(accels[2]) < 0.2){
-                printf("Z Axis acceleration: %f\n", fabs(accels[2]));
-                hasAccel = true;
-            }
-            if (hasAccel){
-                Util_sleepForSeconds(0, DEBOUNCE_ACCEL);
-            }
+           
+            parseAccelReadings(accels);
+            
 
             // printf("x:%-8.5f y:%-8.5f z:%-8.5f\n", accels[0],accels[1], accels[2]);
             Util_sleepForSeconds(0, POLL_RATE);
@@ -136,3 +130,53 @@ static void getAccelerometerReadings(int i2cFileDesc, float arr[]){
 }
 
 
+static void parseAccelReadings(float accels[]){
+    bool hasAccel = false;
+
+    if (fabs(accels[0]) > XY_THRES){
+        printf("X Axis acceleration: %f\n",  fabs(accels[0]));
+        hasAccel = true;
+    }
+    if (fabs(accels[1]) > XY_THRES){
+        printf("Y Axis acceleration: %f\n", fabs(accels[1]));
+        hasAccel = true;
+    }
+    if (fabs(accels[2]) < Z_THRES){
+        printf("Z Axis acceleration: %f\n", fabs(accels[2]));
+        hasAccel = true;
+    }
+    if (hasAccel){
+        Util_sleepForSeconds(0, DEBOUNCE_ACCEL);
+    }
+}
+
+static void sendJoystickDirection(int direction){
+    int vol = Mixer_getVolume();
+    int bpm = Controller_getBPM();
+    switch (direction)
+    {
+    case DIRECTION_PRESS:
+        Controller_setBeat(1);
+        break;
+    case DIRECTION_LEFT:
+        bpm -= BPM_CONTROL;
+        bpm = bpm < MIN_BPM ? MIN_BPM : bpm;
+        Controller_setBPM(bpm);
+        break;
+    case DIRECTION_RIGHT:
+        bpm += BPM_CONTROL;
+        bpm = bpm > MAX_BPM ? MAX_BPM : bpm;
+        Controller_setBPM(bpm);
+        break;
+    case DIRECTION_UP:
+        vol += VOL_CONTROL;
+        vol = vol > MIXER_MAX_VOLUME ? MIXER_MAX_VOLUME: vol;
+        Mixer_setVolume(vol);
+        break;
+    case DIRECTION_DOWN:
+        vol -= VOL_CONTROL;
+        vol = vol < 0 ? 0: vol;
+        Mixer_setVolume(vol);
+        break;
+    }
+}

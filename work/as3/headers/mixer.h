@@ -33,9 +33,4 @@ int  Mixer_getVolume();
 void Mixer_setVolume(int newVolume);
 
 
-//Get/set beats per minute
-int  Mixer_getBPM(void);
-void Mixer_setBPM(int BMP); 
-
-
 #endif //_MIXER_H
