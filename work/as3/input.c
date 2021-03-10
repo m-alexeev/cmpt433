@@ -28,29 +28,6 @@ static bool notDone = true;
 
 static void getAccelerometerReadings(int i2cFileDesc, float arr[]);
 
-static void getAccelerometerReadings(int i2cFileDesc, float arr[]){
-    Accelerometer_t accelReadings; 
-    char* buffer = I2C_readI2cReg(i2cFileDesc, 0x00, NUM_REGISTERS);
-    
-    accelReadings.x = (buffer[REG_X_MSB] << 8) | (buffer[REG_X_LSB]) ;
-    accelReadings.y = (buffer[REG_Y_MSB] << 8) | (buffer[REG_Y_LSB]) ;
-    accelReadings.z = (buffer[REG_Z_MSB] << 8) | (buffer[REG_Z_LSB]) ;
-
-    accelReadings.x >>= 4;
-    accelReadings.y >>= 4;
-    accelReadings.z >>= 4;
-
-    float x = (float)accelReadings.x / 1024;
-    float y = (float)accelReadings.y / 1024;
-    float z = (float)accelReadings.z / 1024;
-
-    arr[0] = x;
-    arr[1] = y; 
-    arr[2] = z;
-    
-    free(buffer);
-
-}
 
 
 
@@ -87,6 +64,7 @@ static void* Input_main(){
             // Get accelerometer Readings        
             getAccelerometerReadings(i2cFileDesc, accels);
 
+            //TODO: REFACTOR
 
             bool hasAccel = false;
 
@@ -133,5 +111,28 @@ void Input_stop(){
     pthread_join(tid,NULL);
 }
 
+static void getAccelerometerReadings(int i2cFileDesc, float arr[]){
+    Accelerometer_t accelReadings; 
+    char* buffer = I2C_readI2cReg(i2cFileDesc, 0x00, NUM_REGISTERS);
+    
+    accelReadings.x = (buffer[REG_X_MSB] << 8) | (buffer[REG_X_LSB]) ;
+    accelReadings.y = (buffer[REG_Y_MSB] << 8) | (buffer[REG_Y_LSB]) ;
+    accelReadings.z = (buffer[REG_Z_MSB] << 8) | (buffer[REG_Z_LSB]) ;
+
+    accelReadings.x >>= 4;
+    accelReadings.y >>= 4;
+    accelReadings.z >>= 4;
+
+    float x = (float)accelReadings.x / 1024;
+    float y = (float)accelReadings.y / 1024;
+    float z = (float)accelReadings.z / 1024;
+
+    arr[0] = x;
+    arr[1] = y; 
+    arr[2] = z;
+    
+    free(buffer);
+
+}
 
 

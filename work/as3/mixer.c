@@ -17,6 +17,12 @@ static snd_pcm_t *handle;
 // Sample size note: This works for mono files because each sample ("frame') is 1 value.
 // If using stereo files then a frame would be two samples.
 
+// Audio Bites
+
+#define SOURCE_BDRUM "beatbox-wav-files/100051__menegass__gui-drum-bd-hard.wav"
+#define SOURCE_HIHAT "beatbox-wav-files/100053__menegass__gui-drum-cc.wav"
+#define SOURCE_SNARE "beatbox-wav-files/100059__menegass__gui-drum-snare-soft.wav"
+
 static unsigned long playbackBufferSize = 0;
 static short *playbackBuffer = NULL;
 
@@ -50,8 +56,9 @@ void Mixer_init(void){
 	// Initialize the currently active sound-bites being played
 	// REVISIT:- Implement this. Hint: set the pSound pointer to NULL for each
 	//     sound bite.
-
-
+	for (int i = 0; i < MAX_SOUND_BITES; i ++){
+		soundBites[i].pSound = NULL;
+	}
 
 	// Open the PCM output
 	int err = snd_pcm_open(&handle, "default", SND_PCM_STREAM_PLAYBACK, 0);
@@ -136,6 +143,17 @@ void Mixer_queueSound(wavedata_t *pSound){
 	assert(pSound->numSamples > 0);
 	assert(pSound->pData);
 
+	pthread_mutex_lock(&audioMutex);{
+	for(int i = 0; i< MAX_SOUND_BITES; i++){
+		if(soundBites[i].pSound == NULL){
+			soundBites[i].pSound = pSound;
+			return;
+		}
+	}
+	}pthread_mutex_unlock(&audioMutex);
+
+	printf("No free slot for the audio file has been found!\n");
+
 	// Insert the sound by searching for an empty sound bite spot
 	/*
 	 * REVISIT: Implement this:
@@ -218,10 +236,27 @@ void Mixer_setVolume(int newVolume){
 //    playbackBuffer: buffer to fill with new PCM data from sound bites.
 //    size: the number of values to store into playbackBuffer
 static void fillPlaybackBuffer(short *playbackBuffer, int size){
+
+	memset(playbackBuffer, 0, size);
+
+	short* buffer = malloc(size * sizeof(short));
+	pthread_mutex_lock(&audioMutex);{
+		for(int i = 0; i < MAX_SOUND_BITES; i++){
+			if (soundBites[i].pSound != NULL){
+				//Add to buffer
+				buffer[soundBites[i].location] += *(soundBites[i].pSound->pData);
+			}
+		}
+
+	}pthread_mutex_unlock(&audioMutex);
+	
+	for (int i = 0; i < size; i ++){
+		playbackBuffer[i] = buffer[i];
+	}
+	free(buffer);
+
+
 	/*
-	 * REVISIT: Implement this
-	 * 1. Wipe the playbackBuffer to all 0's to clear any previous PCM data.
-	 *    Hint: use memset()
 	 * 2. Since this is called from a background thread, and soundBites[] array
 	 *    may be used by any other thread, must synchronize this.
 	 * 3. Loop through each slot in soundBites[], which are sounds that are either
