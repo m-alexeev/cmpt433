@@ -144,32 +144,52 @@ static void parseAccelReadings(float accels[]){
 }
 
 static void sendJoystickDirection(int direction){
-    int vol = Mixer_getVolume();
-    int bpm = Controller_getBPM();
     switch (direction)
     {
     case DIRECTION_PRESS:
-        Controller_setBeat(1);
+        Controller_cycleBeat();
         break;
     case DIRECTION_LEFT:
-        bpm -= BPM_CONTROL;
-        bpm = bpm < MIN_BPM ? MIN_BPM : bpm;
-        Controller_setBPM(bpm);
+        Input_lowerBPM();
         break;
     case DIRECTION_RIGHT:
-        bpm += BPM_CONTROL;
-        bpm = bpm > MAX_BPM ? MAX_BPM : bpm;
-        Controller_setBPM(bpm);
+        Input_raiseBPM();
         break;
     case DIRECTION_UP:
-        vol += VOL_CONTROL;
-        vol = vol > MIXER_MAX_VOLUME ? MIXER_MAX_VOLUME: vol;
-        Mixer_setVolume(vol);
+        Input_raiseVolume();
         break;
     case DIRECTION_DOWN:
-        vol -= VOL_CONTROL;
-        vol = vol < 0 ? 0: vol;
-        Mixer_setVolume(vol);
+        Input_lowerVolume();
         break;
     }
+}
+
+
+void Input_lowerBPM(){
+    int bpm = Controller_getBPM();
+    bpm -= BPM_CONTROL;
+    bpm = bpm < MIN_BPM ? MIN_BPM : bpm;
+    Controller_setBPM(bpm);
+}
+
+void Input_raiseBPM(){
+    int bpm = Controller_getBPM();
+    bpm += BPM_CONTROL;
+    bpm = bpm > MAX_BPM ? MAX_BPM : bpm;
+    Controller_setBPM(bpm);
+}
+
+void Input_lowerVolume(){
+    int vol = Mixer_getVolume();
+    vol -= VOL_CONTROL;
+    vol = vol < 0 ? 0: vol;
+    Mixer_setVolume(vol);
+
+}
+
+void Input_raiseVolume(){
+    int vol = Mixer_getVolume();
+    vol += VOL_CONTROL;
+    vol = vol > MIXER_MAX_VOLUME ? MIXER_MAX_VOLUME: vol;
+    Mixer_setVolume(vol);
 }

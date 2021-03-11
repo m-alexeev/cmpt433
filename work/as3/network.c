@@ -9,8 +9,12 @@
 #include <ctype.h>
 
 
+#include "headers/mixer.h"
+#include "headers/controller.h"
+
+
 #define PORT 12345
-#define MAX_LEN 400
+#define MAX_LEN 25
 
 //Threads
 static pthread_t  tid; 
@@ -21,21 +25,61 @@ static struct sockaddr_in sinRemote;
 static unsigned int sin_len;
 
 
-// static void senReplay(char* message){
-//     sin_len = sizeof(sinRemote);
-//     sendto(socketDescriptor,
-//         message, MAX_LEN, 0, 
-//         (struct sockaddr *) &sinRemote, sin_len);
-// }
+#define TOKEN_MODE "mode"
+#define TOKEN_VOLUME "volume"
+#define TOKEN_TEMPO "tempo"
+#define TOKEN_UPTIME  "uptime"
+
+static void sendReply(char* message){
+    sin_len = sizeof(sinRemote);
+    sendto(socketDescriptor,
+        message, MAX_LEN, 0, 
+        (struct sockaddr *) &sinRemote, sin_len);
+}
 
 
-static void parseCommands(char* command){
+static void parseCommand(char* command){
     const char delim[2] = " ";
     char* token;
     
     token = strtok(command,delim);
     while(token != NULL){
-
+        if (strcmp(token, TOKEN_UPTIME)== 0){
+            FILE* f = fopen("/proc/uptime", "r");
+            char buff[MAX_LEN];
+            memset(buff, 0, MAX_LEN);
+            fgets(buff,MAX_LEN, (FILE*)f);
+            sendReply(buff);
+            fclose(f);
+            return;
+        }
+        if (strcmp(token, TOKEN_VOLUME) == 0){
+            token = strtok(NULL, delim);
+            if (token == NULL){
+                //return cur volume 
+            }else{
+                //parse and update volume
+            }
+            return;
+        }
+        if (strcmp(token, TOKEN_TEMPO) == 0){
+            token = strtok(NULL, delim);
+            if (token == NULL){
+                //return cur tempo
+            }else{
+                //parse and update tempo
+            }
+            return;
+        }
+        if (strcmp(token, TOKEN_MODE) == 0){
+            token = strtok(NULL,delim);
+            if (token == NULL){
+                //return current mode
+            }else{
+                //parse to int and set mode
+            }
+            return;
+        }
     }
 
 }
@@ -64,8 +108,8 @@ static void*  Network_listen(void* args){
         messageRx[termIdx] = 0;
 
         //Parse the incoming command and send response message
-        // parseCommand(messageRx); 
-        printf("%s\n", messageRx);
+        parseCommand(messageRx); 
+        // printf("%s\n", messageRx);
     }
     pthread_exit(0);
 }

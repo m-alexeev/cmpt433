@@ -17,7 +17,9 @@ void Controller_setBPM(int bpm);
 
 int Controller_getBPM(void);
 
-void Controller_setBeat(int bpm);
+void Controller_setBeat(int beat);
+
+void Controller_cycleBeat();
 
 int Controller_getBeat(void);
 

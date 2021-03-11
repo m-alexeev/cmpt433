@@ -89,10 +89,16 @@ void Controller_stop(void){
 }
 
 
-void Controller_setBeat(int beat){
-    currentBeat = (currentBeat + beat) % 3;
-    printf("%d\n",currentBeat);
+void Controller_cycleBeat(){
+    currentBeat = (currentBeat + 1) % 3;
+    printf("Current Beat: %d\n",currentBeat);
 }
+
+void Controller_setBeat(int beat){
+    currentBeat = beat;
+    printf("Current Beat: %d\n",currentBeat);
+}
+
 
 int Controller_getBeat(void){
     return currentBeat;

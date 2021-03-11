@@ -13,6 +13,12 @@ typedef struct Accelerometer_t{
 #define DEBOUNCE_JOYSTICK 3E8
 #define DEBOUNCE_ACCEL 3E8
 
+void Input_lowerBPM(void);
+void Input_raiseBPM(void);
+void Input_lowerVolume(void);
+void Input_raiseVolume(void);
+
+
 
 void Input_start(void);
 
