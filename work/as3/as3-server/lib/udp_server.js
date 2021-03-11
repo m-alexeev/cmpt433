@@ -47,7 +47,7 @@ function handleCommand(socket) {
 		client.on('message', function (message, remote) {
 			console.log("UDP Client: message Rx" + remote.address + ':' + remote.port +' - ' + message);
 
-			var reply = message.toString('utf8')
+			var reply = data + ":"+ message.toString('utf8')
 			socket.emit('commandReply', reply);
 
 			client.close();

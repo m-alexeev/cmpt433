@@ -11,7 +11,7 @@
 
 #include "headers/mixer.h"
 #include "headers/controller.h"
-
+#include "headers/input.h"
 
 #define PORT 12345
 #define MAX_LEN 25
@@ -43,11 +43,12 @@ static void parseCommand(char* command){
     char* token;
     
     token = strtok(command,delim);
+
+    char buff[MAX_LEN];
+    memset(buff, 0, MAX_LEN);
     while(token != NULL){
         if (strcmp(token, TOKEN_UPTIME)== 0){
             FILE* f = fopen("/proc/uptime", "r");
-            char buff[MAX_LEN];
-            memset(buff, 0, MAX_LEN);
             fgets(buff,MAX_LEN, (FILE*)f);
             sendReply(buff);
             fclose(f);
@@ -55,29 +56,33 @@ static void parseCommand(char* command){
         }
         if (strcmp(token, TOKEN_VOLUME) == 0){
             token = strtok(NULL, delim);
-            if (token == NULL){
-                //return cur volume 
-            }else{
-                //parse and update volume
-            }
+            if (token != NULL){
+                strcmp(token,"up") == 0? Input_raiseVolume() : Input_lowerVolume();
+            }                
+            int vol = Mixer_getVolume();
+            sprintf(buff,"%d\n", vol);
+            sendReply(buff);
             return;
         }
         if (strcmp(token, TOKEN_TEMPO) == 0){
             token = strtok(NULL, delim);
-            if (token == NULL){
-                //return cur tempo
-            }else{
-                //parse and update tempo
+            if (token != NULL){
+                strcmp(token,"up") == 0 ? Input_raiseBPM() : Input_lowerBPM();
             }
+            int bpm = Controller_getBPM();
+            sprintf(buff, "%d\n", bpm);
+            sendReply(buff);
             return;
         }
         if (strcmp(token, TOKEN_MODE) == 0){
             token = strtok(NULL,delim);
-            if (token == NULL){
-                //return current mode
-            }else{
-                //parse to int and set mode
+            if (token != NULL){
+                int beat = atoi(token);
+                Controller_setBeat(beat);
             }
+            int beat = Controller_getBeat();
+            sprintf(buff,"%d\n", beat);
+            sendReply(buff);
             return;
         }
     }
