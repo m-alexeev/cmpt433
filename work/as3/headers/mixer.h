@@ -27,7 +27,7 @@ void Mixer_freeWaveFileData(wavedata_t *pSound);
 
 // Queue up another sound bite to play as soon as possible.
 void Mixer_queueSound(wavedata_t *pSound);
-
+void Mixer_freeQueue(void);
 // Get/set the volume.
 // setVolume() function posted by StackOverflow user "trenki" at:
 // http://stackoverflow.com/questions/6787318/set-alsa-master-volume-from-c-code

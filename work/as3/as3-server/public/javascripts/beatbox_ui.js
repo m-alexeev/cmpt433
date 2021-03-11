@@ -24,7 +24,11 @@ $(document).ready(function() {
 	$('#volumeUp').click(()=>{sendRequest("volume up");});
     $('#tempoDown').click(() =>{sendRequest("tempo down");});
     $('#tempoUp').click(() => {	sendRequest("tempo up")});
+	$('#hihat').click(()=>{sendRequest("hihat");});
+	$('#snare').click(()=>{sendRequest("snare");});
+	$('#bass').click(()=>{sendRequest("bass");});
 		
+
 	
 	socket.on('commandReply', function(result) {
 		//Set the appropriate fields 
@@ -63,7 +67,6 @@ $(document).ready(function() {
 			case "tempo":
 				$(tempoid).val(data)
 				break;
-		
 		}
 
 

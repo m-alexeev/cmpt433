@@ -29,6 +29,10 @@ static unsigned int sin_len;
 #define TOKEN_VOLUME "volume"
 #define TOKEN_TEMPO "tempo"
 #define TOKEN_UPTIME  "uptime"
+#define TOKEN_HAT "hihat"
+#define TOKEN_SNARE "snare"
+#define TOKEN_BASS "bass"
+
 
 static void sendReply(char* message){
     sin_len = sizeof(sinRemote);
@@ -52,7 +56,6 @@ static void parseCommand(char* command){
             fgets(buff,MAX_LEN, (FILE*)f);
             sendReply(buff);
             fclose(f);
-            return;
         }
         if (strcmp(token, TOKEN_VOLUME) == 0){
             token = strtok(NULL, delim);
@@ -85,6 +88,16 @@ static void parseCommand(char* command){
             sendReply(buff);
             return;
         }
+        if (strcmp(token,TOKEN_HAT) == 0){
+            Controller_addBeat(HI_HAT);
+        }
+        if (strcmp(token,TOKEN_SNARE) == 0){
+            Controller_addBeat(SNARE);
+        }
+        if (strcmp(token,TOKEN_BASS) == 0){
+            Controller_addBeat(BASS);
+        }
+        return;
     }
 
 }

@@ -128,14 +128,17 @@ static void parseAccelReadings(float accels[]){
 
     if (fabs(accels[0]) > XY_THRES){
         printf("X Axis acceleration: %f\n",  fabs(accels[0]));
+        Controller_addBeat(HI_HAT);
         hasAccel = true;
     }
     if (fabs(accels[1]) > XY_THRES){
         printf("Y Axis acceleration: %f\n", fabs(accels[1]));
+        Controller_addBeat(SNARE);
         hasAccel = true;
     }
     if (fabs(accels[2]) < Z_THRES){
         printf("Z Axis acceleration: %f\n", fabs(accels[2]));
+        Controller_addBeat(BASS);
         hasAccel = true;
     }
     if (hasAccel){

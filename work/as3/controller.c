@@ -7,7 +7,7 @@
 #include "headers/controller.h"
 #include "headers/util.h"
 #include "headers/mixer.h"
-
+#include "headers/input.h"
 
 static bool notDone = true;
 static pthread_t  tid; 
@@ -24,16 +24,17 @@ static void initializeBeatArray();
 
 static void noBeat(){
     //Free playback buffer
+    Mixer_freeQueue();
 }
 
 static void rockBeat(){
     for (int i = 0; i < 4; i ++){
         float halfBeat = (60.0 / BPM / 2);
-        Mixer_queueSound(&beatArr[1]);
+        Mixer_queueSound(&beatArr[HI_HAT]);
         if(i == 0){
-            Mixer_queueSound(&beatArr[0]);
+            Mixer_queueSound(&beatArr[BASS]);
         }if (i==2){
-            Mixer_queueSound(&beatArr[2]);
+            Mixer_queueSound(&beatArr[SNARE]);
         }
         Util_sleepForSeconds(0, halfBeat * 1E9);
     }
@@ -44,7 +45,7 @@ static void customBeat(){
 }
 
 void Controller_addBeat(int direction){
-    return;
+    Mixer_queueSound(&beatArr[direction]);
 }
 
 static void* Controller_main(){
@@ -114,7 +115,7 @@ int Controller_getBPM(void){
 }
 
 static void initializeBeatArray(){
-    Mixer_readWaveFileIntoMemory(SOURCE_BDRUM, &beatArr[0]);
-    Mixer_readWaveFileIntoMemory(SOURCE_HIHAT, &beatArr[1]);
-    Mixer_readWaveFileIntoMemory(SOURCE_SNARE, &beatArr[2]);
+    Mixer_readWaveFileIntoMemory(SOURCE_BDRUM, &beatArr[BASS]);
+    Mixer_readWaveFileIntoMemory(SOURCE_HIHAT, &beatArr[HI_HAT]);
+    Mixer_readWaveFileIntoMemory(SOURCE_SNARE, &beatArr[SNARE]);
 }

@@ -135,6 +135,10 @@ void Mixer_freeWaveFileData(wavedata_t *pSound){
 	pSound->pData = NULL;
 }
 
+void Mixer_freeQueue(){
+	memset(playbackBuffer, 0,playbackBufferSize);
+}
+
 void Mixer_queueSound(wavedata_t *pSound){
 	// Ensure we are only being asked to play "good" sounds:
 	assert(pSound->numSamples > 0);
@@ -327,6 +331,7 @@ static void fillPlaybackBuffer(short *playbackBuffer, int size){
 
 
 }
+
 
 
 void* playbackThread(void* arg){

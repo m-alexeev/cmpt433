@@ -6,6 +6,12 @@ enum eBeat{
     ROCK_BEAT,
     CUSTOM_BEAT,
 };
+enum eDrumDir{
+    HI_HAT = 0,
+    SNARE,
+    BASS 
+};
+
 
 void Controller_start(void);
 
