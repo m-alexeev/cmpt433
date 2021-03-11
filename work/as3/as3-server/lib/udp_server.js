@@ -8,6 +8,10 @@ var io;
 
 var dgram = require('dgram');
 
+
+
+
+
 exports.listen = function(server) {
 	io = socketio.listen(server);
 	io.set('log level 1');
@@ -19,9 +23,10 @@ exports.listen = function(server) {
 
 function handleCommand(socket) {
 	// Pased string of comamnd to relay
-	socket.on('prime', function(data) {
-		console.log('prime command: ' + data);
 
+	socket.on('update', function(data) {
+		console.log('update command: ' + data);
+		
 		// Info for connecting to the local process via UDP
 		var PORT = 12345;
 		var HOST = '127.0.0.1';
