@@ -2,11 +2,11 @@
 // Client-side interactions with the browser.
 var bbgError;
 var serverError;
+var err = [false,false];
 // Make connection to server when web page is fully loaded.
 var socket = io.connect();
 $(document).ready(function() {
 
-	// $(errorbox).hide();
 
 	// Setup a repeating function (every 1s)
 	window.setInterval(function() {
@@ -19,11 +19,13 @@ $(document).ready(function() {
 
 	window.setInterval(()=>{
 		bbgError = setTimeout(()=>{
+			err[0] = true;
 			$(errorbox).show();
 			$("#error-text").text("Beagle bone is not responding, make sure the app is running")
 		},3000);
 
 		serverError = setTimeout(()=>{
+			err[1] = true;
 			$(errorbox).show();
 			$("#error-text").text("Server is not responding, make sure it is running")
 		},3000);
@@ -46,7 +48,10 @@ $(document).ready(function() {
 	socket.on('serverStatus', function(){
 		console.log("Server timer cleared");
 		clearTimeout(serverError);
-		$(errorbox).hide();
+		err[1] = false;
+		if (err[0] === false){
+			$("#errorbox").hide();
+		}
 	});
 	
 
@@ -57,8 +62,11 @@ $(document).ready(function() {
 		console.log(tag, data);
 
 		clearTimeout(bbgError);
-		$(errorbox).hide();
-		// clearTimeout(timeout);
+		err[0] = false;	
+		if (err[1]=== false){
+			$("#errorbox").hide();
+		}
+
 		switch (tag) {
 			case "volume":
 				$(volumeid).val(data)
