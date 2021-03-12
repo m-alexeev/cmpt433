@@ -137,6 +137,12 @@ void Mixer_freeWaveFileData(wavedata_t *pSound){
 
 void Mixer_freeQueue(){
 	memset(playbackBuffer, 0,playbackBufferSize);
+
+	for (int i = 0; i < MAX_SOUND_BITES; i ++){
+		soundBites[i].pSound = NULL;
+		soundBites[i].location = 0;
+	}
+
 }
 
 void Mixer_queueSound(wavedata_t *pSound){

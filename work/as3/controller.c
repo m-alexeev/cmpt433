@@ -17,6 +17,7 @@ static int currentBeat = ROCK_BEAT;
 
 static wavedata_t beatArr[5]; 
 
+static bool freed = false;
 
 static void initializeBeatArray();
 
@@ -24,7 +25,10 @@ static void initializeBeatArray();
 
 static void noBeat(){
     //Free playback buffer
-    Mixer_freeQueue();
+    if (!freed){
+        Mixer_freeQueue();
+        freed = true;
+    }
 }
 
 static void rockBeat(){
@@ -70,9 +74,11 @@ static void* Controller_main(){
             break;
         case ROCK_BEAT:
             rockBeat();
+            freed = false;
             break;
         case CUSTOM_BEAT:
             customBeat();
+            freed = false;
             break;
         }
     }
