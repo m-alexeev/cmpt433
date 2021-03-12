@@ -159,19 +159,6 @@ void Mixer_queueSound(wavedata_t *pSound){
 	if (!foundSlot){
 		printf("No free slot for the audio file has been found!\n");
 	}
-	// Insert the sound by searching for an empty sound bite spot
-	/*
-	 * REVISIT: Implement this:
-	 * 1. Since this may be called by other threads, and there is a thread
-	 *    processing the soundBites[] array, we must ensure access is threadsafe.
-	 * 2. Search through the soundBites[] array looking for a free slot.
-	 * 3. If a free slot is found, place the new sound file into that slot.
-	 *    Note: You are only copying a pointer, not the entire data of the wave file!
-	 * 4. After searching through all slots, if no free slot is found then print
-	 *    an error message to the console (and likely just return vs asserting/exiting
-	 *    because the application most likely doesn't want to crash just for
-	 *    not being able to play another wave file.
-	 */
 
 }
 
@@ -246,90 +233,38 @@ static void fillPlaybackBuffer(short *playbackBuffer, int size){
 
 	memset(playbackBuffer, 0, size * sizeof(short));
 
-	// short* buffer = malloc(size * sizeof(short));
 	pthread_mutex_lock(&audioMutex);{
 		for(int i = 0; i < MAX_SOUND_BITES; i++){
-			if(soundBites[i].pSound != NULL)
-		{
-			int offset = soundBites[i].location;
-			int data = 0;
-			int j = 0;
-			
-			while (j < playbackBufferSize && offset < soundBites[i].pSound->numSamples)
-			{
-				int data_offset = (int)soundBites[i].pSound->pData[offset];
-				data = ((int)playbackBuffer[j]) + data_offset;
-				
-				if(data < SHRT_MIN)
-				{
-					data = SHRT_MIN;
-				}
-				if(data > SHRT_MAX)
-				{
-					data = SHRT_MAX;
-				}
+			//if soundbite exists
+			if(soundBites[i].pSound != NULL){
+				int playbackOffset = soundBites[i].location;
+				int pcmData = 0;
 
-				playbackBuffer[j] = (short)data;
-				offset++;
-				j++;
-				
+				for (int index = 0; index < playbackBufferSize; index ++){
+					if (playbackOffset < soundBites[i].pSound->numSamples){
+						//Get data at current offset
+						int add_data = soundBites[i].pSound->pData[playbackOffset];
+						pcmData = playbackBuffer[index] + add_data;
+
+						//Clamp pcmData 
+						pcmData = pcmData < SHRT_MIN ? SHRT_MIN : pcmData;
+						pcmData = pcmData > SHRT_MAX ? SHRT_MAX : pcmData;
+						//Set data the clamped data back into the buffer
+						playbackBuffer[index] = (short)pcmData;
+						playbackOffset ++;
+					}
+				}
+				//Set the offset location of each soundbite if not done playing 
+				//Otherwise clear the data of the soundbite
+				soundBites[i].location = playbackOffset;
+				if(soundBites[i].location >= soundBites[i].pSound->numSamples){
+					soundBites[i].pSound = NULL;
+					soundBites[i].location=0;
+				}
 			}
-			soundBites[i].location = offset;
-			if(soundBites[i].location >= soundBites[i].pSound->numSamples)
-			{
-				soundBites[i].pSound = NULL;
-			}
-		}
 		}
 	}pthread_mutex_unlock(&audioMutex);
 	
-
-
-
-	/*
-	 * 2. Since this is called from a background thread, and soundBites[] array
-	 *    may be used by any other thread, must synchronize this.
-	 * 3. Loop through each slot in soundBites[], which are sounds that are either
-	 *    waiting to be played, or partially already played:
-	 *    - If the sound bite slot is unused, do nothing for this slot.
-	 *    - Otherwise "add" this sound bite's data to the play-back buffer
-	 *      (other sound bites needing to be played back will also add to the same data).
-	 *      * Record that this portion of the sound bite has been played back by incrementing
-	 *        the location inside the data where play-back currently is.
-	 *      * If you have now played back the entire sample, free the slot in the
-	 *        soundBites[] array.
-	 *
-	 * Notes on "adding" PCM samples:
-	 * - PCM is stored as signed shorts (between SHRT_MIN and SHRT_MAX).
-	 * - When adding values, ensure there is not an overflow. Any values which would
-	 *   greater than SHRT_MAX should be clipped to SHRT_MAX; likewise for underflow.
-	 * - Don't overflow any arrays!
-	 * - Efficiency matters here! The compiler may do quite a bit for you, but it doesn't
-	 *   hurt to keep it in mind. Here are some tips for efficiency and readability:
-	 *   * If, for each pass of the loop which "adds" you need to change a value inside
-	 *     a struct inside an array, it may be faster to first load the value into a local
-	 *      variable, increment this variable as needed throughout the loop, and then write it
-	 *     back into the struct inside the array after. For example:
-	 *           int offset = myArray[someIdx].value;
-	 *           for (int i =...; i < ...; i++) {
-	 *               offset ++;
-	 *           }
-	 *           myArray[someIdx].value = offset;
-	 *   * If you need a value in a number of places, try loading it into a local variable
-	 *          int someNum = myArray[someIdx].value;
-	 *          if (someNum < X || someNum > Y || someNum != Z) {
-	 *              someNum = 42;
-	 *          }
-	 *          ... use someNum vs myArray[someIdx].value;
-	 *
-	 */
-
-
-
-
-
-
-
 }
 
 
