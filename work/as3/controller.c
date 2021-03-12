@@ -42,6 +42,15 @@ static void rockBeat(){
 
 static void customBeat(){
     //Add custom beat  
+    for (int i = 0; i < 4; i++){
+        Mixer_queueSound(&beatArr[SNARE]);
+        Mixer_queueSound(&beatArr[HI_HAT]);
+        if (i % 2 == 0){
+            Mixer_queueSound(&beatArr[BASS]);
+        }
+        float halfBeat = (60.0 / BPM / 2);
+        Util_sleepForSeconds(0, halfBeat * 1E9);
+    }
 }
 
 void Controller_addBeat(int direction){
