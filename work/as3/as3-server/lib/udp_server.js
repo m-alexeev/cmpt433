@@ -60,4 +60,10 @@ function handleCommand(socket) {
 			console.log("error: ",err);
 		});
 	});
+
+
+	socket.on("status", function(data){
+		console.log("server status recieved");
+		socket.emit("serverStatus", "okay");
+	});
 };
